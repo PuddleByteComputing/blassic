@@ -20,7 +20,7 @@ async function openStream(season: string, day: string) {
     .then(response => response.body)
     .then(body => createReadableStreamLineReader(body))
     .then((lineStream) => lineStream.getReader())
-    .catch(error => console.log(error));
+    .catch(error => console.error(error));
 }
 
 const initialGameState = { data: {} } as GameStore;
@@ -33,7 +33,7 @@ function App() {
   const turns = useRef([]);
   const streaming = useRef('');
   const [turnNumber, setTurnNumber] = useState(0);
-  const [playing, playBall] = useState(false)
+  const [playing, playBall] = useState(false);
 
   const [dawdling, dawdle] = useState(500);
   const [fussing, fuss] = useState(0);
@@ -43,27 +43,24 @@ function App() {
   const clock = () => {
     if (playing) {
       if (turnNumber < turns.current.length - 1) {
-        console.log(fussing);
         setTimeout(() => setTurnNumber(turnNumber + 1), dawdling * (1 + fussing * Math.random()));
       } else if (streaming.current) {
         setTimeout(() => playBall(playing), 20); // using playBall() to trigger re-render
       }
     }
-  }
+  };
 
   useEffect(clock, [playing, turnNumber, dawdling, fussing]);
 
   const retrieveData = () => {
     if (!turns.current.length) {
       if (gameCache.data?.[season]?.[day]) {
-        console.log('updating turns')
         turns.current = [...gameCache.data[season][day]];
       } else if (!streaming.current && season && day) {
-        console.log('fetching day')
-        fetchDay(season, day)
+        fetchDay(season, day);
       }
     }
-  }
+  };
 
   useEffect(retrieveData, [season, day]);
 
@@ -77,33 +74,32 @@ function App() {
         },
       },
     });
-  }
+  };
 
   const receiveTurn = (newTurn) => {
-    // console.log(turn);
     if (!turns.length) {
       setTurnNumber(0); // triggers re-render
     }
     turns.current.push(newTurn);
-  }
+  };
 
   const fetchDay = (season: string, day: string) => {
-    streaming.current = `s${season}d${day}`
+    streaming.current = `s${season}d${day}`;
     openStream(season, day)
       .then((lineReader) => {
-        if (!lineReader) { return }
+        if (!lineReader) { return; }
+
         lineReader.read().then(function processLine(result) {
           if (result.done) {
             cacheGame();
             streaming.current = '';
-            console.log(`fetched s${season}d${day}`);
             return;
           }
           receiveTurn(JSON.parse(result.value));
           lineReader.read().then(processLine);
-        })
+        });
       });
-  }
+  };
 
   return (
     <Container className={styles.container}>

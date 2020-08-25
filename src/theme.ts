@@ -1,7 +1,4 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-import createPalette from '@material-ui/core/styles/createPalette';
-import createTypography from '@material-ui/core/styles/createTypography';
-
 import { amber, cyan } from '@material-ui/core/colors';
 
 const theme = createMuiTheme({

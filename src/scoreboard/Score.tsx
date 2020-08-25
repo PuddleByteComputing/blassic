@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Grid, Divider } from '@material-ui/core';
+import { Card, Grid } from '@material-ui/core';
 import styles from './Score.module.scss';
 import Bases from './scorecard/Bases';
 
@@ -10,7 +10,7 @@ function Score({ play }) {
         <Grid item container>
           <Grid item container direction="column" xs={7}>
             <Grid item container>
-              <Grid item xs={11} container alignContent="center" justify="flex-start" className={styles.team} style={{ borderLeft: `5px solid ${play.awayTeamColor}` }} className={styles.team}>
+              <Grid item xs={11} container alignContent="center" justify="flex-start" className={styles.team} style={{ borderLeft: `5px solid ${play.awayTeamColor}` }}>
                 {play.awayTeamNickname} &nbsp;
                 <span style={{ backgroundColor: play.awayTeamColor }}>
                   {String.fromCodePoint(parseInt(play.awayTeamEmoji))}

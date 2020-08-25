@@ -31,7 +31,6 @@ function forbiddenList() {
     }
   });
 
-  // invert elements, sort by first element (timestamp), reinvert
   return files.map(([s, t]) => [t, s]).sort().map(([t, s]) => [s, t]);
 }
 
@@ -80,23 +79,6 @@ async function forbiddenToTemp([file, timestamp]) {
   process.stdout.write('\u254D');
 }
 
-// this doesn't do what we want; not all files have clientMeta data
-async function digestDayFragment(file) {
-  const fileStream = fs.createReadStream(file);
-  const rl = readline.createInterface(fileStream);
-  let turns = [];
-  for await (const line of rl) {
-    const turn = JSON.parse(line);
-    if (turn.clientMeta) {
-      turns.push([turn.clientMeta.timestamp, line]);
-    } else {
-      //console.log(`No timestamp for s${turn.season.seasonNumber}d${turn.schedule[0].day}`);
-    }
-  }
-
-  return(turns); // [[turn, line], ... ]
-}
-
 function tempToDays() {
   fs.readdirSync(tempDir).forEach((season) =>
     fs.readdirSync(`${tempDir}/${season}`).forEach(async (day) => {
@@ -105,15 +87,6 @@ function tempToDays() {
       if (!fs.existsSync(seasonDir)) {
         fs.mkdirSync(seasonDir);
       }
-
-      // const files = fs.readdirSync(dir);
-      // dayFragments: [[[timestamp, line], ...], [[timestamp, line], ...]]
-      // const dayFragments = await Promise.all(files.map((file) => digestDayFragment(`${dir}/${file}`)));
-      // const combinedSortedLines = dayFragments.flat(1) // [[timestamp, line], ... ]
-      //                                        .sort() // by timestamp (first element in subarrays)
-      //                                        .map(([timestamp, line]) => line);
-      //
-      // fs.writeFile(`${seasonDir}/${day}.txt`, combinedSortedLines.join("\n"), (err) => err && console.log(err));
 
       Promise.all(fs.readdirSync(dir)
                     .map(file => [parseInt(file), `${dir}/${file}`])
@@ -137,11 +110,11 @@ function rewriteForbiddenKnowledge() {
   console.log(`Breaking days for ${forbiddenFiles.length} forbidden files`);
   console.log(`${Array(forbiddenFiles.length + 1).join('\u2500')}\u2510`);
   Promise.all(forbiddenFiles.map(forbiddenToTemp))
-         .then(() => console.log('\u2519'))
-         .then(() => console.log('Days broken, recombining...'))
-         .then(() => tempToDays());
-
-  return;
+         .then(() => {
+           console.log('\u2519');
+           console.log('Days broken, recombining...');
+           tempToDays();
+         });
 }
 
 rewriteForbiddenKnowledge();

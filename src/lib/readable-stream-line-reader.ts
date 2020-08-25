@@ -11,7 +11,7 @@ function createReadableStreamLineReader(response: ReadableStream) {
         if (trimmed.length > 0) {
           controller.enqueue(trimmed);
         }
-      }
+      };
 
       reader = response.getReader();
       const decoder = new TextDecoder();
@@ -31,7 +31,7 @@ function createReadableStreamLineReader(response: ReadableStream) {
 
           const data = decoder.decode(result.value, { stream: true });
           data_buf += data;
-          const lines = data_buf.split("\n")
+          const lines = data_buf.split("\n");
           lines.slice(0, -1).forEach((line) => enqueueTrimmed(line));
           data_buf = lines[lines.length - 1];
 

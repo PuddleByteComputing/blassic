@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, Grid } from '@material-ui/core'
+import { Card, Grid } from '@material-ui/core';
 import Score from './Score';
 
 function ScoreBoard({ turn }) {
   const schedule = turn?.schedule;
 
   if (!schedule) {
-    return <Card>No Games</Card>
+    return (<Card>No Games</Card>);
   } else {
     // schedule.map(play => console.log(play));
   }

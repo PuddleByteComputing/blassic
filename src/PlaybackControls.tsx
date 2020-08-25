@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react';
 import { Grid, IconButton, Paper, Slider } from '@material-ui/core';
 import { PlayCircleFilled, PauseCircleFilled } from '@material-ui/icons';
 import styles from './PlaybackControls.module.scss';
@@ -8,7 +8,7 @@ function PauseButton({ playing, playBall }) {
     return (
       <IconButton
         className={styles.pause}
-        onClick={(event) => { event.stopPropagation(); playBall(false) }}
+        onClick={(event) => { event.stopPropagation(); playBall(false); }}
         onFocus={(event) => event.stopPropagation()}
       >
         <PauseCircleFilled />
@@ -18,7 +18,7 @@ function PauseButton({ playing, playBall }) {
     return (
       <IconButton
         className={styles.pause}
-        onClick={(event) => { event.stopPropagation(); playBall(true) }}
+        onClick={(event) => { event.stopPropagation(); playBall(true); }}
         onFocus={(event) => event.stopPropagation()}
       >
         <PlayCircleFilled />
@@ -33,14 +33,14 @@ function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, 
   const dsteps = 100;
   const dmax = 30000;
   const [dawdleFeedback, setDawdleFeedback] = useState(Math.sqrt(dawdling * dsteps ** 2 / dmax));
-  const [fussFeedback, setFussFeedback] = useState(fussing * 100)
+  const [fussFeedback, setFussFeedback] = useState(fussing * 100);
 
-  const handleDawdleCommit: HandlerType = (_event, value) => dawdle(dawdleScale(value))
-  const handleDawdleChange: HandlerType = (_event, value) => setDawdleFeedback(value)
-  const handleFussCommit: HandlerType = (_event, value) => fuss(value / 100)
-  const handleFussChange: HandlerType = (_event, value) => setFussFeedback(value)
+  const handleDawdleCommit: HandlerType = (_event, value) => dawdle(dawdleScale(value));
+  const handleDawdleChange: HandlerType = (_event, value) => setDawdleFeedback(value);
+  const handleFussCommit: HandlerType = (_event, value) => fuss(value / 100);
+  const handleFussChange: HandlerType = (_event, value) => setFussFeedback(value);
 
-  const dawdleScale = (value: number) => Math.max(1, Math.floor(dmax * value ** 2 / dsteps ** 2))
+  const dawdleScale = (value: number) => Math.max(1, Math.floor(dmax * value ** 2 / dsteps ** 2));
 
   return (
     <Paper className={styles.paper}>
