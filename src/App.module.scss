@@ -1,0 +1,32 @@
+.container {
+  height: 100vh;
+  margin: 0;
+  max-width: 100%;
+  padding: 0;
+  text-align: center;
+
+  .paper {
+    margin: 1rem auto;
+    max-width: 40vw;
+    min-width: 40vw;
+    padding: 1rem;
+
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+
+      .classic {
+        color: #ccc;
+        font-style: italic;
+      }
+    }
+
+    .subtitle {
+      color: #ccc;
+      font-size: 1rem;
+      font-style: italic;
+      font-weight: 400;
+    }
+  }
+}

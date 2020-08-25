@@ -1,0 +1,126 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Container, Paper } from '@material-ui/core';
+
+import createReadableStreamLineReader from './lib/readable-stream-line-reader';
+import ScoreBoard from './scoreboard/ScoreBoard';
+import PlaybackControls from './PlaybackControls';
+
+import styles from './App.module.scss';
+
+interface GameStore {
+  data: {
+    [season: string]: {
+      [day: string]: any[]
+    },
+  },
+}
+
+async function openStream(season: string, day: string) {
+  return fetch(`/forbidden-knowledge/digested/${season}/${day}.txt`)
+    .then(response => response.body)
+    .then(body => createReadableStreamLineReader(body))
+    .then((lineStream) => lineStream.getReader())
+    .catch(error => console.log(error));
+}
+
+const initialGameState = { data: {} } as GameStore;
+
+function App() {
+  const season = '2' as string;
+  const day = '53' as string;
+
+  const [gameCache, updateGames] = useState(initialGameState);
+  const turns = useRef([]);
+  const streaming = useRef('');
+  const [turnNumber, setTurnNumber] = useState(0);
+  const [playing, playBall] = useState(false)
+
+  const [dawdling, dawdle] = useState(2);
+  const [fussing, fuss] = useState(0);
+
+  const turn = turns.current[turnNumber];
+
+  useEffect(() => {
+    if (playing) {
+      if (turnNumber < turns.current.length - 1) {
+        setTimeout(() => setTurnNumber(turnNumber + 1), dawdling + fussing * (0.5 - Math.random()));
+      } else if (streaming.current) {
+        setTimeout(() => playBall(playing), 20); // using playBall() to trigger re-render
+      }
+    }
+  }, [playing, turnNumber]);
+
+  const cacheGame = () => {
+    updateGames({
+      data: {
+        ...gameCache.data,
+        [season]: {
+          ...gameCache.data?.[season],
+          [day]: [...turns.current],
+        },
+      },
+    });
+  }
+
+  const receiveTurn = (newTurn) => {
+    // console.log(turn);
+    if (!turns.length) {
+      setTurnNumber(0); // triggers re-render
+    }
+    turns.current.push(newTurn);
+  }
+
+  const fetchDay = (season: string, day: string) => {
+    streaming.current = `s${season}d${day}`
+    openStream(season, day)
+      .then((lineReader) => {
+        if (!lineReader) { return }
+        lineReader.read().then(function processLine(result) {
+          if (result.done) {
+            cacheGame();
+            streaming.current = '';
+            console.log(`fetched s${season}d${day}`);
+            return;
+          }
+          receiveTurn(JSON.parse(result.value));
+          lineReader.read().then(processLine);
+        })
+      });
+  }
+
+  useEffect(() => {
+    if (!turns.current.length) {
+      if (gameCache.data?.[season]?.[day]) {
+        console.log('updating turns')
+        turns.current = [...gameCache.data[season][day]];
+      } else if (!streaming.current && season && day) {
+        console.log('fetching day')
+        fetchDay(season, day)
+      }
+    }
+  }, [season, day]);
+
+  return (
+    <Container className={styles.container}>
+      <Paper square className={styles.paper} variant="outlined">
+        <div className={styles.title}>
+          Blaseball <span className={styles.classic}>Classic</span>
+        </div>
+        <div className={styles.subtitle}>
+          Replay your favorite Blaseball games
+        </div>
+      </Paper>
+      <PlaybackControls
+        dawdling={dawdling}
+        fussing={fussing}
+        playing={playing}
+        playBall={playBall}
+        turn={turn}
+        turnNumber={turnNumber}
+      />
+      <ScoreBoard turn={turn} />
+    </Container>
+  );
+}
+
+export default App;

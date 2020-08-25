@@ -1,0 +1,32 @@
+.scorecard {
+  min-width: 30vw;
+  padding: .2rem;
+
+  .team {
+    font-family: 'Lora', serif;
+    font-size: 1.6rem;
+    font-variant: small-caps;
+    margin-bottom: 6px;
+    padding-left: .4rem;
+  }
+
+  .score {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .bso {
+    font-family: 'Oswald', sans-serif;
+    text-align: right;
+  }
+
+  .lastUpdate {
+    border-top: 1px solid black;
+    font-size: .9rem;
+    font-style: italic;
+    margin-top: 1rem;
+    padding-top: .4rem;
+  }
+}

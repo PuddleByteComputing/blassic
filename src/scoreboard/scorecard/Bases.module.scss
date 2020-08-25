@@ -1,0 +1,17 @@
+.diamond {
+  font-family: 'Gothic A1', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  padding-top: .4rem;
+
+  .tier {
+    height: 1.6rem;
+  }
+
+  .homeplate {
+    font-size: 2.4rem;
+    font-weight: 900;
+    height: 2.65rem;
+    transform: rotate(180deg);
+  }
+}
