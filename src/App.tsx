@@ -35,20 +35,37 @@ function App() {
   const [turnNumber, setTurnNumber] = useState(0);
   const [playing, playBall] = useState(false)
 
-  const [dawdling, dawdle] = useState(2);
+  const [dawdling, dawdle] = useState(500);
   const [fussing, fuss] = useState(0);
 
   const turn = turns.current[turnNumber];
 
-  useEffect(() => {
+  const clock = () => {
     if (playing) {
       if (turnNumber < turns.current.length - 1) {
-        setTimeout(() => setTurnNumber(turnNumber + 1), dawdling + fussing * (0.5 - Math.random()));
+        console.log(fussing);
+        setTimeout(() => setTurnNumber(turnNumber + 1), dawdling * (1 + fussing * Math.random()));
       } else if (streaming.current) {
         setTimeout(() => playBall(playing), 20); // using playBall() to trigger re-render
       }
     }
-  }, [playing, turnNumber]);
+  }
+
+  useEffect(clock, [playing, turnNumber, dawdling, fussing]);
+
+  const retrieveData = () => {
+    if (!turns.current.length) {
+      if (gameCache.data?.[season]?.[day]) {
+        console.log('updating turns')
+        turns.current = [...gameCache.data[season][day]];
+      } else if (!streaming.current && season && day) {
+        console.log('fetching day')
+        fetchDay(season, day)
+      }
+    }
+  }
+
+  useEffect(retrieveData, [season, day]);
 
   const cacheGame = () => {
     updateGames({
@@ -88,18 +105,6 @@ function App() {
       });
   }
 
-  useEffect(() => {
-    if (!turns.current.length) {
-      if (gameCache.data?.[season]?.[day]) {
-        console.log('updating turns')
-        turns.current = [...gameCache.data[season][day]];
-      } else if (!streaming.current && season && day) {
-        console.log('fetching day')
-        fetchDay(season, day)
-      }
-    }
-  }, [season, day]);
-
   return (
     <Container className={styles.container}>
       <Paper square className={styles.paper} variant="outlined">
@@ -111,7 +116,9 @@ function App() {
         </div>
       </Paper>
       <PlaybackControls
+        dawdle={dawdle}
         dawdling={dawdling}
+        fuss={fuss}
         fussing={fussing}
         playing={playing}
         playBall={playBall}
