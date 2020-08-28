@@ -20,7 +20,7 @@ const viewBox = [
 ];
 
 function Bases({ baseRunners, basesOccupied }: Props) {
-  const baseMap = basesOccupied.slice(1)
+  const baseMap = basesOccupied
     .reduce((memo, base, i) => ({ ...memo, [(base + 1).toString()]: baseRunners[i] || '' }),
       { '1': '', '2': '', '3': '' });
 
