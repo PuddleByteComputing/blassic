@@ -13,7 +13,6 @@ function ScoreBoard({ turn }: Props) {
   if (!schedule) {
     return (<Card>No Games</Card>);
   } else {
-    // schedule.map(play => console.log(play));
   }
 
   return (

@@ -103,8 +103,6 @@ function App() {
       });
   };
 
-  console.log(turn);
-
   return (
     <Container className={styles.container}>
       <Paper square className={styles.paper} variant="outlined">
