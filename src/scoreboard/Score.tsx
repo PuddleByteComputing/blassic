@@ -2,65 +2,57 @@ import React from 'react';
 import { Card, Grid } from '@material-ui/core';
 import styles from './Score.module.scss';
 import Bases from './scorecard/Bases';
+import BallStrikeOut from './scorecard/BallStrikeOut';
+import { GameTurnType } from '../lib/blaseball-api-types';
 
-function Score({ play }) {
+function strikesForOut({ awayStrikes, homeStrikes, topOfInning }: GameTurnType) {
+  return (topOfInning ? awayStrikes : homeStrikes);
+}
+
+interface Props {
+  play: GameTurnType
+}
+
+function Score({ play }: Props) {
+  const awayTeamStyle = { borderColor: play.awayTeamColor };
+
   return (
     <Card className={styles.scorecard}>
       <Grid container direction="column">
         <Grid item container>
-          <Grid item container direction="column" xs={7}>
-            <Grid item container>
-              <Grid item xs={11} container alignContent="center" justify="flex-start" className={styles.team} style={{ borderLeft: `5px solid ${play.awayTeamColor}` }}>
-                {play.awayTeamNickname} &nbsp;
-                <span style={{ backgroundColor: play.awayTeamColor }}>
+          <Grid item container direction="column" xs={8} className={styles.teams}>
+            <Grid item container className={styles.away} style={awayTeamStyle}>
+              <Grid item container xs={11} alignContent="center" justify="flex-start" className={styles.teamname}>
+                <div style={{ backgroundColor: play.awayTeamColor }} className={styles.teamlogo}>
                   {String.fromCodePoint(parseInt(play.awayTeamEmoji))}
-                </span>
+                </div>
+                {play.awayTeamNickname} &nbsp;
               </Grid>
               <Grid item xs={1} container className={styles.score} alignContent="center" justify="flex-end">
                 {play.awayScore}
               </Grid>
             </Grid>
-            <Grid item container>
-              <Grid item xs={11} container alignContent="center" justify="flex-start" className={styles.team} style={{ borderLeft: `5px solid ${play.homeTeamColor}` }}>
-                {play.homeTeamNickname} &nbsp;
-                <span style={{ backgroundColor: play.homeTeamColor }}>
+            <Grid item container className={styles.home} style={{ borderColor: play.homeTeamColor }}>
+              <Grid item container xs={11} alignContent="center" justify="flex-start" className={styles.teamname}>
+                <div style={{ backgroundColor: play.homeTeamColor }} className={styles.teamlogo}>
                   {String.fromCodePoint(parseInt(play.homeTeamEmoji))}
-                </span>
+                </div>
+                {play.homeTeamNickname} &nbsp;
               </Grid>
               <Grid item xs={1} container className={styles.score} alignContent="center" justify="flex-end">
                 {play.homeScore}
               </Grid>
             </Grid>
           </Grid>
-          <Grid item container direction="column" xs={2} justify="center">
-            <Grid item container>
-              <Grid item xs={6} className={styles.bso}>
-                B
-              </Grid>
-              <Grid item xs={6}>
-                {play.atBatBalls}
-              </Grid>
-            </Grid>
-            <Grid item container>
-              <Grid item xs={6} className={styles.bso}>
-                S
-              </Grid>
-              <Grid item xs={6}>
-                {play.atBatStrikes}
-              </Grid>
-            </Grid>
-            <Grid item container>
-              <Grid item xs={6} className={styles.bso}>
-                O
-              </Grid>
-              <Grid item xs={6}>
-                {play.halfInningOuts}
-              </Grid>
-            </Grid>
+          <Grid item container xs={2} alignContent="center" justify="center">
+            <Bases baseRunners={play.baseRunners} basesOccupied={play.basesOccupied} />
           </Grid>
-          <Grid item xs={3}>
-            <Bases runners={play.baseRunners} />
-          </Grid>
+          <BallStrikeOut
+            balls={play.atBatBalls}
+            outs={play.halfInningOuts}
+            strikes={play.atBatStrikes}
+            strikesForOut={strikesForOut(play)}
+          />
         </Grid>
         <Grid item container alignContent="center" justify="flex-end" className={styles.lastUpdate}>
           {play.lastUpdate}

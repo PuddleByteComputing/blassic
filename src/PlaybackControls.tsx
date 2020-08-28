@@ -1,9 +1,15 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Grid, IconButton, Paper, Slider } from '@material-ui/core';
 import { PlayCircleFilled, PauseCircleFilled } from '@material-ui/icons';
+import { GameDataType } from './lib/blaseball-api-types';
 import styles from './PlaybackControls.module.scss';
 
-function PauseButton({ playing, playBall }) {
+interface PauseProps {
+  playing: boolean,
+  playBall: (val: boolean) => void,
+}
+
+function PauseButton({ playing, playBall }: PauseProps) {
   if (playing) {
     return (
       <IconButton
@@ -27,18 +33,33 @@ function PauseButton({ playing, playBall }) {
   }
 }
 
-type HandlerType = (_event: ChangeEvent<{}>, value: number | number[]) => void;
+type HandlerType = (_event: ChangeEvent<{}>, value: number) => void;
 
-function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, turn, turnNumber }) {
+interface Props {
+  dawdle: (val: number) => void,
+  dawdling: number,
+  fuss: (val: number) => void,
+  fussing: number,
+  playing: boolean,
+  playBall: (val: boolean) => void,
+  turn: GameDataType,
+  turnNumber: number
+}
+
+function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, turn, turnNumber }: Props) {
   const dsteps = 100;
   const dmax = 30000;
   const [dawdleFeedback, setDawdleFeedback] = useState(Math.sqrt(dawdling * dsteps ** 2 / dmax));
   const [fussFeedback, setFussFeedback] = useState(fussing * 100);
 
-  const handleDawdleCommit: HandlerType = (_event, value) => dawdle(dawdleScale(value));
-  const handleDawdleChange: HandlerType = (_event, value) => setDawdleFeedback(value);
-  const handleFussCommit: HandlerType = (_event, value) => fuss(value / 100);
-  const handleFussChange: HandlerType = (_event, value) => setFussFeedback(value);
+  const handleDawdleCommit: HandlerType = (_event, value: number) =>
+    dawdle(dawdleScale(value));
+  const handleDawdleChange: HandlerType = (_event, value: number) =>
+    setDawdleFeedback(value);
+  const handleFussCommit: HandlerType = (_event, value: number) =>
+    fuss(value / 100);
+  const handleFussChange: HandlerType = (_event, value: number) =>
+    setFussFeedback(value);
 
   const dawdleScale = (value: number) => Math.max(1, Math.floor(dmax * value ** 2 / dsteps ** 2));
 
@@ -59,6 +80,7 @@ function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, 
               Dawdle:
             </Grid>
             <Grid item container xs={6} justify="center">
+              {/* @ts-ignore -- Slider callbacks are typed number | number[]; we're not using range sliders */}
               <Slider
                 value={dawdleFeedback}
                 min={2}
@@ -76,6 +98,7 @@ function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, 
               Fuss:
             </Grid>
             <Grid item container xs={6} justify="center">
+              {/* @ts-ignore -- Slider callbacks are typed number | number[]; we're not using range sliders */}
               <Slider
                 value={fussFeedback}
                 min={0}
@@ -90,7 +113,7 @@ function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, 
           </Grid>
         </Grid>
       </Grid>
-    </Paper>
+    </Paper >
   );
 }
 

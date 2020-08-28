@@ -1,29 +1,39 @@
+$teams-line-height: 2.6rem;
+
 .scorecard {
   min-width: 30vw;
   padding: .2rem;
 
-  .team {
+  .teams {
     font-family: 'Lora', serif;
     font-size: 1.6rem;
     font-variant: small-caps;
-    margin-bottom: 6px;
+    line-height: $teams-line-height;
     padding-left: .4rem;
-  }
 
-  .score {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
+    .away {
+      border-top: 1px solid;
+    }
 
-  .bso {
-    font-family: 'Oswald', sans-serif;
-    text-align: right;
+    .home {
+      border-bottom: 1px solid;
+    }
+
+    .teamlogo {
+      line-height: $teams-line-height;
+      margin-right: .4rem;
+      padding: 0 .4rem;
+    }
+
+    .score {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
   }
 
   .lastUpdate {
-    border-top: 1px solid black;
+    border-top: solid #000000;
     font-size: .9rem;
     font-style: italic;
     margin-top: 1rem;

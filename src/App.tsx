@@ -1,16 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, MutableRefObject } from 'react';
 import { Container, Paper } from '@material-ui/core';
 
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
 import ScoreBoard from './scoreboard/ScoreBoard';
 import PlaybackControls from './PlaybackControls';
+import { GameDataType, GameTurnType } from './lib/blaseball-api-types';
 
 import styles from './App.module.scss';
 
 interface GameStore {
   data: {
     [season: string]: {
-      [day: string]: any[]
+      [day: string]: GameDataType[]
     },
   },
 }
@@ -30,7 +31,8 @@ function App() {
   const day = '53' as string;
 
   const [gameCache, updateGames] = useState(initialGameState);
-  const turns = useRef([]);
+  //const turns: GameDataType[] = useRef([]);
+  const turns: MutableRefObject<GameDataType[]> = useRef([]);
   const streaming = useRef('');
   const [turnNumber, setTurnNumber] = useState(0);
   const [playing, playBall] = useState(false);
@@ -76,8 +78,8 @@ function App() {
     });
   };
 
-  const receiveTurn = (newTurn) => {
-    if (!turns.length) {
+  const receiveTurn = (newTurn: GameDataType) => {
+    if (!turns.current.length) {
       setTurnNumber(0); // triggers re-render
     }
     turns.current.push(newTurn);
@@ -100,6 +102,8 @@ function App() {
         });
       });
   };
+
+  console.log(turn);
 
   return (
     <Container className={styles.container}>

@@ -1,17 +1,15 @@
-.diamond {
-  font-family: 'Gothic A1', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 600;
-  padding-top: .4rem;
+$base-color: #fff;
 
-  .tier {
-    height: 1.6rem;
+.diamond {
+  height: 100%;
+  stroke: $base-color;
+  stroke-width: 2;
+
+  .empty {
+    fill: none;
   }
 
-  .homeplate {
-    font-size: 2.4rem;
-    font-weight: 900;
-    height: 2.65rem;
-    transform: rotate(180deg);
+  .occupied {
+    fill: $base-color;
   }
 }
