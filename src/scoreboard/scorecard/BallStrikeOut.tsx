@@ -10,10 +10,10 @@ interface PipsProps {
 function Pips({ count, max }: PipsProps) {
   const num = count ? count : 0;
   return (
-    <span>
+    <>
       {Array(num + 1).join("\u25CF")}
       {Array(max - num + 1).join("\u25CB")}
-    </span>
+    </>
   );
 }
 
@@ -26,32 +26,32 @@ interface Props {
 
 function BallStrikeOut({ balls, outs, strikes, strikesForOut }: Props) {
   return (
-    <Grid item container direction="column" xs={2} justify="center" className={styles.bso}>
+    <>
       <Grid item container>
-        <Grid container item xs={4} justify="center" className={styles.label}>
-          B
+        <Grid container item xs={4} alignContent="center" justify="flex-start" className={styles.label}>
+          Ball
         </Grid>
-        <Grid container item xs={8} alignContent="center" justify="flex-start">
+        <Grid container item xs={8} alignContent="center" justify="flex-start" className={styles.pips}>
           <Pips count={balls} max={4} />
         </Grid>
       </Grid>
       <Grid item container>
-        <Grid container item xs={4} justify="center" className={styles.label}>
-          S
+        <Grid container item xs={4} alignContent="center" justify="flex-start" className={styles.label}>
+          Strike
         </Grid>
-        <Grid container item xs={8} justify="flex-start">
+        <Grid container item xs={8} alignContent="center" justify="flex-start" className={styles.pips}>
           <Pips count={strikes} max={strikesForOut} />
         </Grid>
       </Grid>
       <Grid item container>
-        <Grid container item xs={4} justify="center" className={styles.label}>
-          O
+        <Grid container item xs={4} alignContent="center" justify="flex-start" className={styles.label}>
+          Out
         </Grid>
-        <Grid container item xs={8} justify="flex-start">
+        <Grid container item xs={8} alignContent="center" justify="flex-start" className={styles.pips}>
           <Pips count={outs} max={3} />
         </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 }
 

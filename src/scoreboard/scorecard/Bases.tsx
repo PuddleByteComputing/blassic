@@ -7,7 +7,7 @@ interface Props {
 }
 
 const diamondHeight = 100;
-const pad = 10;
+const pad = 7;
 const diagonalPad = pad * Math.sqrt(2);
 const baseDiag = (diamondHeight - diagonalPad) / 2;
 const baseSide = baseDiag / Math.sqrt(2);

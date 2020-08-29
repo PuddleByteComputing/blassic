@@ -64,56 +64,54 @@ function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, 
   const dawdleScale = (value: number) => Math.max(1, Math.floor(dmax * value ** 2 / dsteps ** 2));
 
   return (
-    <Paper className={styles.paper}>
-      <Grid container>
-        <Grid item container alignContent="center" justify="flex-start" xs={5}>
-          Season {turn?.season?.seasonNumber || '???'},
+    <Grid container className={styles.playback}>
+      <Grid item container alignContent="center" justify="flex-start" xs={8} md={5}>
+        Season {turn?.season?.seasonNumber || '???'},
           day {turn?.schedule?.[0]?.day || '???'},
           turn {turnNumber}
-        </Grid>
-        <Grid item container alignContent="center" justify="center" xs={2}>
-          <PauseButton playing={playing} playBall={playBall} />
-        </Grid>
-        <Grid item container alignContent="center" justify="flex-end" direction="column" xs={5}>
-          <Grid item container alignContent="center" spacing={1}>
-            <Grid item container xs={4} justify="flex-end">
-              Dawdle:
+      </Grid>
+      <Grid item container xs={4} md={2} alignContent="center" justify="center">
+        <PauseButton playing={playing} playBall={playBall} />
+      </Grid>
+      <Grid item container xs={12} md={5} alignContent="center" justify="flex-end" direction="column">
+        <Grid item container>
+          <Grid item container xs={2} md={4} alignContent="center" justify="flex-end">
+            Dawdle:
             </Grid>
-            <Grid item container xs={6} justify="center">
-              {/* @ts-ignore -- Slider callbacks are typed number | number[]; we're not using range sliders */}
-              <Slider
-                value={dawdleFeedback}
-                min={2}
-                max={dsteps}
-                onChange={handleDawdleChange}
-                onChangeCommitted={handleDawdleCommit}
-              />
-            </Grid>
-            <Grid item container xs={2} justify="flex-end">
-              {(dawdleScale(dawdleFeedback) / 1000).toFixed(dawdleFeedback >= dsteps / 4 ? 0 : 2)}s
-            </Grid>
+          <Grid item container xs={8} md={6} alignContent="center" justify="center" className={styles.slider}>
+            {/* @ts-ignore -- Slider callbacks are typed number | number[]; we're not using range sliders */}
+            <Slider
+              value={dawdleFeedback}
+              min={2}
+              max={dsteps}
+              onChange={handleDawdleChange}
+              onChangeCommitted={handleDawdleCommit}
+            />
           </Grid>
-          <Grid item container alignContent="center" spacing={1}>
-            <Grid item container xs={4} justify="flex-end">
-              Fuss:
+          <Grid item container xs={2} md={2} alignContent="center" justify="flex-start">
+            {(dawdleScale(dawdleFeedback) / 1000).toFixed(dawdleFeedback >= dsteps / 4 ? 0 : 2)}s
             </Grid>
-            <Grid item container xs={6} justify="center">
-              {/* @ts-ignore -- Slider callbacks are typed number | number[]; we're not using range sliders */}
-              <Slider
-                value={fussFeedback}
-                min={0}
-                max={200}
-                onChange={handleFussChange}
-                onChangeCommitted={handleFussCommit}
-              />
-            </Grid>
-            <Grid item container xs={2} justify="flex-end">
-              {Math.floor(fussFeedback)}%
-            </Grid>
+        </Grid>
+        <Grid item container>
+          <Grid item container xs={2} md={4} alignContent="center" justify="flex-end">
+            Fuss:
           </Grid>
+          <Grid item container xs={8} md={6} alignContent="center" justify="center" className={styles.slider}>
+            {/* @ts-ignore -- Slider callbacks are typed number | number[]; we're not using range sliders */}
+            <Slider
+              value={fussFeedback}
+              min={0}
+              max={200}
+              onChange={handleFussChange}
+              onChangeCommitted={handleFussCommit}
+            />
+          </Grid>
+          <Grid item container xs={2} md={2} alignContent="center" justify="flex-start">
+            {Math.floor(fussFeedback)}%
+            </Grid>
         </Grid>
       </Grid>
-    </Paper >
+    </Grid>
   );
 }
 

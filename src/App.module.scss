@@ -1,32 +1,28 @@
-.container {
-  height: 100vh;
-  margin: 0;
-  max-width: 100%;
-  padding: 0;
-  text-align: center;
+$board-border-color: #666;
 
-  .paper {
-    margin: 1rem auto;
-    max-width: 40vw;
-    min-width: 40vw;
+.gridwrap {
+  // without this we'll have a horizontal scrollbar
+  padding: 4px 8px;
+}
+
+.header {
+  .title {
+    border: 1px solid $board-border-color;
+    font-size: 2rem;
+    font-weight: 700;
     padding: 1rem;
+    text-align: center;
 
-    .title {
-      font-size: 2rem;
-      font-weight: 700;
-      text-align: center;
-
-      .classic {
-        color: #ccc;
-        font-style: italic;
-      }
-    }
-
-    .subtitle {
+    .classic {
       color: #ccc;
-      font-size: 1rem;
       font-style: italic;
-      font-weight: 400;
     }
   }
+}
+
+.subtitle {
+  color: #ccc;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 400;
 }

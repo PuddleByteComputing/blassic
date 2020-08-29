@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, MutableRefObject } from 'react';
-import { Container, Paper } from '@material-ui/core';
+import { Container, Grid } from '@material-ui/core';
 
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
 import ScoreBoard from './scoreboard/ScoreBoard';
@@ -37,8 +37,8 @@ function App() {
   const [turnNumber, setTurnNumber] = useState(0);
   const [playing, playBall] = useState(false);
 
-  const [dawdling, dawdle] = useState(500);
-  const [fussing, fuss] = useState(0);
+  const [dawdling, dawdle] = useState(500); // min ms between pitches
+  const [fussing, fuss] = useState(0.1); // additional time between pitches (fraction of dawdle)
 
   const turn = turns.current[turnNumber];
 
@@ -104,15 +104,17 @@ function App() {
   };
 
   return (
-    <Container className={styles.container}>
-      <Paper square className={styles.paper} variant="outlined">
-        <div className={styles.title}>
+    <div className={styles.gridwrap}>
+      <Grid container className={styles.header}>
+        <Grid item md={3} />
+        <Grid item xs={12} md={6} className={styles.title} justify="center">
           Blaseball <span className={styles.classic}>Classic</span>
-        </div>
-        <div className={styles.subtitle}>
-          Replay your favorite Blaseball games
-        </div>
-      </Paper>
+          <div className={styles.subtitle}>
+            Replay your favorite Blaseball games
+          </div>
+          <Grid item md={3} />
+        </Grid>
+      </Grid>
       <PlaybackControls
         dawdle={dawdle}
         dawdling={dawdling}
@@ -124,7 +126,7 @@ function App() {
         turnNumber={turnNumber}
       />
       <ScoreBoard turn={turn} />
-    </Container>
+    </div>
   );
 }
 

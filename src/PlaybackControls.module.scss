@@ -1,6 +1,11 @@
-.paper {
-  margin: 1rem auto;
-  max-width: 60%;
-  min-width: 30%;
+$controls-border-color: #666;
+
+.playback {
+  border: 1px solid $controls-border-color;
+  margin: 1rem 0;
   padding: 0 1rem;
+
+  .slider {
+    padding: 0 1rem;
+  }
 }
