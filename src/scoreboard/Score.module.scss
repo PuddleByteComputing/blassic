@@ -2,14 +2,13 @@ $teams-line-height: 2.6rem;
 
 .scorecard {
   min-width: 30vw;
-  padding: .2rem;
+  padding: .4rem;
 
   .teams {
     font-family: 'Lora', serif;
     font-size: 1.6rem;
     font-variant: small-caps;
     line-height: $teams-line-height;
-    padding-left: .4rem;
 
     .away {
       border-top: 1px solid;

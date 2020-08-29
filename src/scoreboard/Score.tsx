@@ -10,18 +10,16 @@ function strikesForOut({ awayStrikes, homeStrikes, topOfInning }: GameTurnType) 
 }
 
 interface Props {
-  play: GameTurnType
+  play: GameTurnType,
 }
 
 function ScoreCard({ play }: Props) {
-  const awayTeamStyle = { borderColor: play.awayTeamColor };
-
   return (
     <Card className={styles.scorecard}>
       <Grid container direction="column">
         <Grid item container>
           <Grid item container direction="column" xs={12} md={7} className={styles.teams}>
-            <Grid item container className={styles.away} style={awayTeamStyle}>
+            <Grid item container className={styles.away} style={{ borderColor: play.awayTeamColor }}>
               <Grid item container xs={11} alignContent="center" justify="flex-start" className={styles.teamname}>
                 <div style={{ backgroundColor: play.awayTeamColor }} className={styles.teamlogo}>
                   {String.fromCodePoint(parseInt(play.awayTeamEmoji))}
@@ -47,7 +45,7 @@ function ScoreCard({ play }: Props) {
             </Grid>
           </Grid>
           <Grid item container xs={12} md={5} alignContent="center" justify="center">
-            <Grid item container xs={6} alignContent="center" justify="flex-start">
+            <Grid item container xs={6} alignContent="center" justify="center">
               <Bases baseRunners={play.baseRunners} basesOccupied={play.basesOccupied} />
             </Grid>
             <Grid item container xs={6} direction="column" justify="flex-end">
