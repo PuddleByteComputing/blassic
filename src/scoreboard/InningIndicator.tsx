@@ -15,7 +15,9 @@ function InningIndicator({ play }: Props) {
       <>
         <div className={styles.final}>
           Final
-          {play.inning > 8 ? [<>&nbsp;</>, '(', play.inning + 1, ')'] : ''}
+          <span className={styles.extrainnings}>
+            {play.inning > 8 ? [<>&nbsp;</>, '(', play.inning + 1, ')'] : ''}
+          </span>
         </div>
         <div className={styles.finalshame}>{play.shame ? `The ${play.awayTeamNickname} were shamed!` : ''}</div>
       </>
