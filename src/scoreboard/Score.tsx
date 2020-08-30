@@ -3,6 +3,7 @@ import { Card, Grid } from '@material-ui/core';
 import styles from './Score.module.scss';
 import Bases from './scorecard/Bases';
 import BallStrikeOut from './scorecard/BallStrikeOut';
+import InningIndicator from './InningIndicator';
 import { GameTurnType } from '../lib/blaseball-api-types';
 
 function strikesForOut({ awayStrikes, homeStrikes, topOfInning }: GameTurnType) {
@@ -19,9 +20,12 @@ function ScoreCard({ play }: Props) {
       <Grid container direction="column">
         <Grid item container>
           <Grid item container direction="column" xs={12} md={7} className={styles.teams}>
+            <Grid item container alignContent="center" className={styles.inning}>
+              <InningIndicator play={play} />
+            </Grid>
             <Grid item container className={styles.away} style={{ borderColor: play.awayTeamColor }}>
               <Grid item container xs={11} alignContent="center" justify="flex-start" className={styles.teamname}>
-                <div style={{ backgroundColor: play.awayTeamColor }} className={styles.teamlogo}>
+                <div style={{ backgroundColor: play.awayTeamColor }} className={styles.awayteamlogo}>
                   {String.fromCodePoint(parseInt(play.awayTeamEmoji))}
                 </div>
                 {play.awayTeamNickname} &nbsp;
@@ -33,7 +37,7 @@ function ScoreCard({ play }: Props) {
             </Grid>
             <Grid item container className={styles.home} style={{ borderColor: play.homeTeamColor }}>
               <Grid item container xs={11} alignContent="center" justify="flex-start">
-                <div style={{ backgroundColor: play.homeTeamColor }} className={styles.teamlogo}>
+                <div style={{ backgroundColor: play.homeTeamColor }} className={styles.hometeamlogo}>
                   {String.fromCodePoint(parseInt(play.homeTeamEmoji))}
                 </div>
                 {play.homeTeamNickname} &nbsp;
@@ -44,7 +48,7 @@ function ScoreCard({ play }: Props) {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item container xs={12} md={5} alignContent="center" justify="center">
+          <Grid item container xs={12} md={5} alignContent="center" justify="center" className={styles.atbat}>
             <Grid item container xs={6} alignContent="center" justify="center">
               <Bases baseRunners={play.baseRunners} basesOccupied={play.basesOccupied} />
             </Grid>

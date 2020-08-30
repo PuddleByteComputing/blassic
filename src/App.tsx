@@ -41,6 +41,7 @@ function App() {
   const [fussing, fuss] = useState(0.1); // additional time between pitches (fraction of dawdle)
 
   const turn = turns.current[turnNumber];
+  console.log(turn);
 
   const clock = () => {
     if (playing) {

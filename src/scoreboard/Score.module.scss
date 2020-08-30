@@ -1,27 +1,47 @@
 $teams-line-height: 2.6rem;
 
+@mixin teamlogo {
+  line-height: $teams-line-height;
+  margin-right: .4rem;
+  padding: 0 .4rem;
+}
+
 .scorecard {
   min-width: 30vw;
   padding: .4rem;
 
   .teams {
+    border-left: 8px;
     font-family: 'Lora', serif;
     font-size: 1.6rem;
     font-variant: small-caps;
     line-height: $teams-line-height;
 
+    .inning {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1rem;
+      font-variant: normal;
+      line-height: 1.4rem;
+    }
+
     .away {
       border-top: 1px solid;
+      border-top-left-radius: 8px;
     }
 
     .home {
       border-bottom: 1px solid;
+      border-bottom-left-radius: 8px;
     }
 
-    .teamlogo {
-      line-height: $teams-line-height;
-      margin-right: .4rem;
-      padding: 0 .4rem;
+    .awayteamlogo {
+      @include teamlogo;
+      border-top-left-radius: 8px;
+    }
+
+    .hometeamlogo {
+      @include teamlogo;
+      border-bottom-left-radius: 8px;
     }
 
     .odds {
@@ -36,6 +56,10 @@ $teams-line-height: 2.6rem;
       font-size: 1.8rem;
       font-weight: 700;
     }
+  }
+
+  .atbat {
+    padding: .4rem;
   }
 
   .lastupdate {

@@ -48,7 +48,8 @@ interface Props {
 
 function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, turn, turnNumber }: Props) {
   const dsteps = 100;
-  const dmax = 30000;
+  const dmax = 15000;
+  const dmin = 5;
   const [dawdleFeedback, setDawdleFeedback] = useState(Math.sqrt(dawdling * dsteps ** 2 / dmax));
   const [fussFeedback, setFussFeedback] = useState(fussing * 100);
 
@@ -61,7 +62,7 @@ function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, 
   const handleFussChange: HandlerType = (_event, value: number) =>
     setFussFeedback(value);
 
-  const dawdleScale = (value: number) => Math.max(1, Math.floor(dmax * value ** 2 / dsteps ** 2));
+  const dawdleScale = (value: number) => dmin + (dmax - dmin) * value ** 2 / dsteps ** 2;
 
   return (
     <Grid container className={styles.playback}>
@@ -82,7 +83,7 @@ function PlaybackControls({ dawdle, dawdling, fuss, fussing, playing, playBall, 
             {/* @ts-ignore -- Slider callbacks are typed number | number[]; we're not using range sliders */}
             <Slider
               value={dawdleFeedback}
-              min={2}
+              min={0}
               max={dsteps}
               onChange={handleDawdleChange}
               onChangeCommitted={handleDawdleCommit}

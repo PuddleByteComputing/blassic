@@ -69,6 +69,49 @@ export interface StandingsType {
   wins: { [teamId: string]: number }[],
 }
 
+interface PlayoffsType {
+  __v: number,
+  _id: UUID,
+  name: string,
+  numberOfRounds: number,
+  playoffDay: number,
+  rounds: UUID[],
+  season: number,
+  tomorrowRound: number,
+}
+
+interface RoundType {
+  __v: number,
+  _id: UUID,
+  gameIndex: number,
+  games: UUID[][],
+  matchups: UUID[],
+  name: string,
+  roundNumber: number,
+  special: boolean,
+  winnerSeeds: number[],
+  winners: UUID[],
+}
+
+interface MatchupType {
+  _id: UUID,
+  __v: number,
+  awaySeed: number,
+  awayTeam: UUID,
+  awayWins: number,
+  homeSeed: number,
+  homeTeam: UUID,
+  homeWins: 1,
+}
+
+export interface PostSeasonType {
+  matchups: MatchupType[],
+  playoffs: PlayoffsType,
+  round: RoundType,
+  tomorrowMatchups: MatchupType[],
+  tomorrowRound: RoundType,
+}
+
 export interface GameTurnType {
   atBatBalls: number,
   atBatStrikes: number,
@@ -125,7 +168,7 @@ export interface GameTurnType {
 }
 
 export interface GameDataType {
-  postseason: {},
+  postseason: PostSeasonType,
   schedule: GameTurnType[],
   season: SeasonType,
   sim: SimType,

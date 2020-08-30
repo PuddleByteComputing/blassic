@@ -1,0 +1,50 @@
+@mixin inning-box {
+  border-bottom-left-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  min-width: 4rem;
+  min-height: 1.4rem;
+  padding: 0 .4rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.pregame {
+  @include inning-box;
+
+  font-weight: 400;
+}
+
+.playing {
+  @include inning-box;
+
+  background-color: green;
+
+  .uparrow {
+    font-size: .7rem;
+    font-weight: 400;
+    vertical-align: text-top;
+  }
+
+  .downarrow {
+    font-size: .7rem;
+    font-weight: 400;
+    vertical-align: text-bottom;
+  }
+}
+
+.shame {
+  @include inning-box;
+
+  background-color: purple;
+}
+
+.final {
+  @include inning-box;
+
+  background-color: red;
+}
+
+.finalshame {
+  margin-left: .4rem;
+}
