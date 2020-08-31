@@ -1,8 +1,9 @@
-const fs = require('fs');
-const readline = require('readline');
-const { pipeline } = require('stream');
-const { createGunzip } = require('zlib');
-const { promisify } = require('util');
+import fs from 'fs';
+import readline from 'readline';
+import { pipeline } from 'stream';
+import { createGunzip } from 'zlib';
+import { promisify } from 'util';
+import { firstLine, lineCount } from './lineCount.js';
 
 const dataDir = './forbidden_knowledge' ;
 const tempDir = `${dataDir}/.temp`;
@@ -79,27 +80,63 @@ async function forbiddenToTemp([file, timestamp]) {
   process.stdout.write('\u254D');
 }
 
-function tempToDays() {
-  fs.readdirSync(tempDir).forEach((season) =>
-    fs.readdirSync(`${tempDir}/${season}`).forEach(async (day) => {
-      const dir = `${tempDir}/${season}/${day}`;
-      const seasonDir = `${outDir}/${season}`;
-      if (!fs.existsSync(seasonDir)) {
-        fs.mkdirSync(seasonDir);
-      }
+function postseasonMetadata(gameTurn) {
+  if (!gameTurn.postseason.playoffs) {
+    return ({});
+  }
 
-      Promise.all(fs.readdirSync(dir)
-                    .map(file => [parseInt(file), `${dir}/${file}`])
-                    .sort()
-                    .map(([timestamp, fileName]) => promisify(fs.readFile)(fileName, (err, data) => err ? '' : data))
+  return ({
+    postseason: {
+      game: gameTurn.postseason.round.gameIndex,
+      name: gameTurn.postseason.round.name,
+      round: gameTurn.postseason.round.roundNumber,
+    }
+  });
+}
+
+async function tempsToDays() {
+  return Promise.all(
+    fs.readdirSync(tempDir)
+      .flatMap((season) =>
+        fs.readdirSync(`${tempDir}/${season}`).map(async (day) => {
+          const dir = `${tempDir}/${season}/${day}`;
+          const seasonDir = `${outDir}/${season}`;
+          if (!fs.existsSync(seasonDir)) {
+            fs.mkdirSync(seasonDir);
+          }
+
+          return (
+            Promise.all(fs.readdirSync(dir)
+                          .map(file => [parseInt(file), `${dir}/${file}`])
+                          .sort()
+                          .map(([timestamp, fileName]) =>
+                            promisify(fs.readFile)(fileName, (err, data) => err ? '' : data))
+            )
+                   .then((filesData) => {
+                     const catted = Buffer.concat(filesData);
+                     //const catted = filesData.join("\n");
+                     fs.writeFile(`${seasonDir}/${day}.txt`,
+                                  catted,
+                                  (err) => err ? console.log(err) : null);
+                     let firstTurn;
+                     try {
+                       firstTurn = JSON.parse(firstLine(catted) || "null");
+                     } catch (err) {
+                       console.log(err);
+                       console.log(`${catted.slice(0, 50)}...[${catted.length} chars]`);
+                       // console.log(firstLine(catted));
+                       process.exit();
+                       firstTurn = null;
+                     }
+                     if (!firstTurn) {
+                       console.log(`null record at s${season}d${day}`);
+                     }
+                     return ([season, day, {turns: lineCount(catted), ...postseasonMetadata(firstTurn)}]);
+                   })
+          );
+        })
       )
-             .then((filesData) =>
-               fs.writeFile(`${seasonDir}/${day}.txt`,
-                            filesData.join("\n"),
-                            (err) => err ? console.log(err) : null)
-             );
-    })
-  );
+    );
 }
 
 function rewriteForbiddenKnowledge() {
@@ -113,7 +150,13 @@ function rewriteForbiddenKnowledge() {
          .then(() => {
            console.log('\u2519');
            console.log('Days broken, recombining...');
-           tempToDays();
+           tempsToDays()
+             .then((linecounts) =>
+               fs.writeFile(`${outDir}/available.json`,
+                            JSON.stringify(linecounts.reduce(((memo, [s, d, metadata]) =>
+                              ({...memo, [s]: {...memo?.[s], [d]: metadata}})),
+                                                             {})),
+                            (err) => err ? console.log(err) : null));
          });
 }
 

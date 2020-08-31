@@ -106,7 +106,7 @@ interface MatchupType {
 
 export interface PostSeasonType {
   matchups: MatchupType[],
-  playoffs: PlayoffsType,
+  playoffs: PlayoffsType | false,
   round: RoundType,
   tomorrowMatchups: MatchupType[],
   tomorrowRound: RoundType,
