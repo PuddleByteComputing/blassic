@@ -129,15 +129,12 @@ async function tempsToDays() {
             )
                    .then((filesData) => {
                      const catted = Buffer.concat(filesData);
-                     let lastTurn;
-                     lastTurn = JSON.parse(lastLine(catted));
-                     if(!lastTurn.schedule[0].gameStart) {
-                       return false;
-                     }
+                     const lastTurn = JSON.parse(lastLine(catted));
+                     if(!lastTurn.schedule[0].gameStart) { return false; }
+
                      fs.writeFile(`${seasonDir}/${day}.txt`,
                                   catted,
                                   (err) => err ? console.error(err) : null);
-                     if (!lastTurn.schedule) { console.log(Object.keys(lastTurn));}
                      return ([season, day, { turns: lineCount(catted),
                                              complete: lastTurn.schedule.every((g) => g.gameComplete),
                                              ...postseasonMetadata(lastTurn)}]);
