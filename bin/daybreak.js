@@ -3,19 +3,21 @@ import readline from 'readline';
 import { pipeline } from 'stream';
 import { createGunzip } from 'zlib';
 import { promisify } from 'util';
-import { firstLine, lineCount } from './lineCount.js';
+import { lastLine, lineCount } from './lineCount.js';
 
 const dataDir = './forbidden_knowledge' ;
 const tempDir = `${dataDir}/.temp`;
 const outDir = `${dataDir}/digested`;
 
+// TODO: make this incremental (only process new data)
+
 function cleanup() {
   fs.rmdirSync(tempDir, {recursive: true}, (err) => null);
-  fs.rmdirSync(outDir, {recursive: true}, (err) => null);
 }
 
 function setup() {
   cleanup();
+  fs.rmdirSync(outDir, {recursive: true}, (err) => null);
   fs.mkdirSync(tempDir);
   fs.mkdirSync(outDir, {recursive: true});
 }
@@ -64,16 +66,29 @@ async function forbiddenToTemp([file, timestamp]) {
   const outStreams = {};
 
   pipeline(fileStream, unzip,
-           (err) => err ? console.log(`problem with file ${file}: ${err}`) : null);
+           (err) => err ? console.error(`problem with file ${file}: ${err}`) : null);
 
+  let lineCount = 0;
 
   for await (const line of rl) {
+    // NOTE - parsing every line of these files is expensive,
+    //   the tradeoff is cleaner data in the digested gameday files.
     const turn = JSON.parse(line);
-    const season = turn.sim.season.toString();
-    const day = turn.sim.day.toString();
-    const outStream = ensureOutstream(outStreams, season, day, timestamp.toString());
-    outStream.write(line);
-    outStream.write("\n");
+    if(!turn.sim?.season) {
+      const keys = Object.keys(turn);
+      if (keys.length !== 1 || keys[0] !== 'clientMeta') {
+        console.error(`file: ${path}, line ${lineCount} keys: ${keys}`);
+      } else {
+        // there are records like this in the archives-- clientMeta but no data. We just skip them.
+      }
+    } else {
+      const season = turn.sim.season.toString();
+      const day = turn.sim.day.toString();
+      const outStream = ensureOutstream(outStreams, season, day, timestamp.toString());
+      outStream.write(line);
+      outStream.write("\n");
+    }
+    lineCount++;
   }
 
   endOutStreams(outStreams);
@@ -114,24 +129,18 @@ async function tempsToDays() {
             )
                    .then((filesData) => {
                      const catted = Buffer.concat(filesData);
-                     //const catted = filesData.join("\n");
+                     let lastTurn;
+                     lastTurn = JSON.parse(lastLine(catted));
+                     if(!lastTurn.schedule[0].gameStart) {
+                       return false;
+                     }
                      fs.writeFile(`${seasonDir}/${day}.txt`,
                                   catted,
-                                  (err) => err ? console.log(err) : null);
-                     let firstTurn;
-                     try {
-                       firstTurn = JSON.parse(firstLine(catted) || "null");
-                     } catch (err) {
-                       console.log(err);
-                       console.log(`${catted.slice(0, 50)}...[${catted.length} chars]`);
-                       // console.log(firstLine(catted));
-                       process.exit();
-                       firstTurn = null;
-                     }
-                     if (!firstTurn) {
-                       console.log(`null record at s${season}d${day}`);
-                     }
-                     return ([season, day, {turns: lineCount(catted), ...postseasonMetadata(firstTurn)}]);
+                                  (err) => err ? console.error(err) : null);
+                     if (!lastTurn.schedule) { console.log(Object.keys(lastTurn));}
+                     return ([season, day, { turns: lineCount(catted),
+                                             complete: lastTurn.schedule.every((g) => g.gameComplete),
+                                             ...postseasonMetadata(lastTurn)}]);
                    })
           );
         })
@@ -152,11 +161,17 @@ function rewriteForbiddenKnowledge() {
            console.log('Days broken, recombining...');
            tempsToDays()
              .then((linecounts) =>
-               fs.writeFile(`${outDir}/available.json`,
-                            JSON.stringify(linecounts.reduce(((memo, [s, d, metadata]) =>
-                              ({...memo, [s]: {...memo?.[s], [d]: metadata}})),
-                                                             {})),
-                            (err) => err ? console.log(err) : null));
+               fs.writeFile(`${outDir}/index.json`,
+                            JSON.stringify(
+                              linecounts.reduce((memo, data) => {
+                                if(!data) { return memo; }
+                                const [s, d, metadata] = data;
+                                return ({...memo, [s]: {...memo?.[s], [d]: metadata}});
+                              }, {})
+                            ),
+                            (err) => err ? console.log(err) : null)
+               )
+             .then(cleanup);
          });
 }
 
