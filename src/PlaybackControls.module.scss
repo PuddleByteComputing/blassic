@@ -1,6 +1,12 @@
 $controls-border-color: #666;
+@mixin controls-font {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+}
 
-.playback {
+.controls {
+  @include controls-font;
+
   border: 1px solid $controls-border-color;
   margin: 1rem 0;
   padding: 0 1rem;
@@ -8,4 +14,14 @@ $controls-border-color: #666;
   .slider {
     padding: 0 1rem;
   }
+}
+
+.gamepicker {
+  @include controls-font;
+}
+
+.gamemenuitem {
+  @include controls-font;
+
+  font-size: .8rem;
 }

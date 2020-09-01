@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState, MutableRefObject } from 'react';
-import { Container, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
 import ScoreBoard from './scoreboard/ScoreBoard';
 import PlaybackControls from './PlaybackControls';
-import { GameDataType, GameTurnType } from './lib/blaseball-api-types';
+import { GameDataType } from './lib/blaseball-api-types';
 
 import styles from './App.module.scss';
 
@@ -16,52 +16,69 @@ interface GameStore {
   },
 }
 
+export interface GameMetaData {
+  [season: string]: {
+    [day: string]: {
+      turns: number,
+      completed: boolean,
+      started: boolean,
+    }
+  }
+}
+
 async function openStream(season: string, day: string) {
-  return fetch(`/forbidden-knowledge/digested/${season}/${day}.txt`)
+  return fetch(`/forbidden-knowledge/${season}/${day}.txt`)
     .then(response => response.body)
     .then(body => createReadableStreamLineReader(body))
     .then((lineStream) => lineStream.getReader())
     .catch(error => console.error(error));
 }
 
-const initialGameState = { data: {} } as GameStore;
+const initialGameState: GameStore = { data: {} };
+const initialGameIndex: GameMetaData = {};
 
 function App() {
-  const season = '2' as string;
-  const day = '53' as string;
-
+  const [day, setDay] = useState('');
+  const [season, setSeason] = useState('');
+  const [gameIndex, setGameIndex] = useState(initialGameIndex);
   const [gameCache, updateGames] = useState(initialGameState);
-  //const turns: GameDataType[] = useRef([]);
   const turns: MutableRefObject<GameDataType[]> = useRef([]);
   const streaming = useRef('');
   const [turnNumber, setTurnNumber] = useState(0);
   const [playing, playBall] = useState(false);
-
-  const [dawdling, dawdle] = useState(500); // min ms between pitches
-  const [fussing, fuss] = useState(0.1); // additional time between pitches (fraction of dawdle)
+  const [dawdling, dawdle] = useState(4000); // min ms between pitches
 
   const turn = turns.current[turnNumber];
-  console.log(turn);
 
   const clock = () => {
     if (playing) {
       if (turnNumber < turns.current.length - 1) {
-        setTimeout(() => setTurnNumber(turnNumber + 1), dawdling * (1 + fussing * Math.random()));
+        setTimeout(() => setTurnNumber(turnNumber + 1), dawdling);
       } else if (streaming.current) {
         setTimeout(() => playBall(playing), 20); // using playBall() to trigger re-render
       }
     }
   };
 
-  useEffect(clock, [playing, turnNumber, dawdling, fussing]);
+  useEffect(clock, [playing, turnNumber, dawdling]);
+
+  const fetchGameIndex = () => {
+    fetch('/forbidden-knowledge/index.json')
+      .then(response => response.json())
+      .then(json => setGameIndex(json))
+      .catch((err) => alert(`Could not fetch game archive index: ${err}`));
+  };
+
+  useEffect(fetchGameIndex, []);
 
   const retrieveData = () => {
-    if (!turns.current.length) {
-      if (gameCache.data?.[season]?.[day]) {
-        turns.current = [...gameCache.data[season][day]];
-      } else if (!streaming.current && season && day) {
-        fetchDay(season, day);
-      }
+    if (!(season && day)) { return; }
+    console.log(`retreiving s${season}d${day}`);
+
+    if (gameCache.data?.[season]?.[day]) {
+      turns.current = [...gameCache.data[season][day]];
+    } else if (!streaming.current && season && day) {
+      fetchDay(season, day);
     }
   };
 
@@ -88,6 +105,7 @@ function App() {
 
   const fetchDay = (season: string, day: string) => {
     streaming.current = `s${season}d${day}`;
+    turns.current = [];
     openStream(season, day)
       .then((lineReader) => {
         if (!lineReader) { return; }
@@ -104,14 +122,25 @@ function App() {
       });
   };
 
+  const handleSetDay = (day: string) => {
+    playBall(false);
+    setTurnNumber(0);
+    setDay(day);
+  };
+
+  const handleSetSeason = (season: string) => {
+    setDay('');
+    setSeason(season);
+  };
+
   return (
     <div className={styles.gridwrap}>
       <Grid container className={styles.header}>
         <Grid item md={3} />
-        <Grid item xs={12} md={6} className={styles.title} justify="center">
+        <Grid item xs={12} md={6} className={styles.title}>
           Blaseball <span className={styles.classic}>Classic</span>
           <div className={styles.subtitle}>
-            Replay your favorite Blaseball games
+            Relive your favorite Blaseball Games
           </div>
           <Grid item md={3} />
         </Grid>
@@ -119,12 +148,15 @@ function App() {
       <PlaybackControls
         dawdle={dawdle}
         dawdling={dawdling}
-        fuss={fuss}
-        fussing={fussing}
+        day={day}
+        gameIndex={gameIndex}
         playing={playing}
         playBall={playBall}
         turn={turn}
         turnNumber={turnNumber}
+        season={season}
+        setDay={handleSetDay}
+        setSeason={handleSetSeason}
       />
       <ScoreBoard turn={turn} />
     </div>
