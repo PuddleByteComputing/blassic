@@ -24,7 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eje2ct",
-    "forbidden": "aws --no-sign-request s3 cp s3://blaseball-archive-iliana/ ./forbidden_knowledge --recursive",
+    "forbidden": "aws --no-sign-request s3 sync s3://blaseball-archive-iliana/ ./forbidden_knowledge",
     "daybreak": "node ./bin/daybreak.js"
   },
   "eslintConfig": {
