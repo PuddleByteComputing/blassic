@@ -9,6 +9,12 @@
   vertical-align: middle;
 }
 
+.upcoming {
+  @include inning-box;
+
+  background-color: #666;
+}
+
 .playing {
   @include inning-box;
 

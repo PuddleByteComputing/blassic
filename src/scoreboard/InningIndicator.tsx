@@ -3,20 +3,33 @@ import ordinal from '../lib/ordinal';
 import { GameTurnType } from '../lib/blaseball-api-types';
 import styles from './InningIndicator.module.scss';
 
+
+function ExtraInnings({ inning }: { inning: number }) {
+  if (inning < 9) {
+    return null;
+  }
+
+  return (<>&nbsp;({inning + 1})</>);
+}
+
 interface Props {
   play: GameTurnType
 }
 
 function InningIndicator({ play }: Props) {
   if (!play.gameStart) {
-    return null;
-  } else if (play.finalized) {
+    return (
+      <div className={styles.upcoming}>
+        Batting Practice
+      </div>
+    );
+  } else if (play.gameComplete) {
     return (
       <>
         <div className={styles.final}>
           Final
           <span className={styles.extrainnings}>
-            {play.inning > 8 ? [<>&nbsp;</>, '(', play.inning + 1, ')'] : ''}
+            <ExtraInnings inning={play.inning} />
           </span>
         </div>
         <div className={styles.finalshame}>{play.shame ? `The ${play.awayTeamNickname} were shamed!` : ''}</div>

@@ -24,8 +24,6 @@ function Bases({ baseRunners, basesOccupied }: Props) {
     .reduce((memo, base, i) => ({ ...memo, [(base + 1).toString()]: baseRunners[i] || '' }),
       { '1': '', '2': '', '3': '' });
 
-  if (basesOccupied.length > 1) { console.log(baseMap); }
-
   return (
     <svg viewBox={viewBox.join(" ")} className={styles.diamond}>
       <g transform="rotate(-45)">

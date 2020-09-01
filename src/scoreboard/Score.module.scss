@@ -25,13 +25,17 @@ $teams-line-height: 2.6rem;
     }
 
     .away {
+      border-right: 2px solid;
       border-top: 2px solid;
       border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
     }
 
     .home {
       border-bottom: 2px solid;
       border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      border-right: 2px solid;
     }
 
     .awayteamlogo {
@@ -55,6 +59,7 @@ $teams-line-height: 2.6rem;
       font-family: 'Open Sans', sans-serif;
       font-size: 1.8rem;
       font-weight: 700;
+      padding-right: .4rem;
     }
   }
 

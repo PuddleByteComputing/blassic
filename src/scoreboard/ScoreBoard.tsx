@@ -17,8 +17,8 @@ function ScoreBoard({ turn }: Props) {
 
   return (
     <Grid container spacing={2} justify="center">
-      {schedule.map(play => (
-        <Grid item xs={12} md={6} key={play._id}>
+      {schedule.map((play, idx) => (
+        <Grid item xs={12} md={6} key={idx}>
           <Score play={play} />
         </Grid>
       ))}
