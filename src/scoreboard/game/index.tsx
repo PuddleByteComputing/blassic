@@ -15,7 +15,7 @@ interface Props {
   play: GameTurnType,
 }
 
-function ScoreCard({ play }: Props) {
+function Game({ play }: Props) {
   return (
     <Card className={styles.scorecard}>
       <Grid container direction="column">
@@ -25,7 +25,7 @@ function ScoreCard({ play }: Props) {
               <InningIndicator play={play} />
             </Grid>
             <Grid item container className={styles.away} style={{ borderColor: play.awayTeamColor }}>
-              <Grid item container xs={11} alignContent="center" justify="flex-start" className={styles.teamname}>
+              <Grid item container xs={11} alignContent="center" justify="flex-start">
                 <div style={{ backgroundColor: play.awayTeamColor }} className={styles.awayteamlogo}>
                   {String.fromCodePoint(parseInt(play.awayTeamEmoji))}
                 </div>
@@ -71,4 +71,4 @@ function ScoreCard({ play }: Props) {
   );
 }
 
-export default ScoreCard;
+export default Game;

@@ -1,4 +1,10 @@
-$board-border-color: #666;
+$border-color: #666;
+$darker-text: #ccc;
+
+@mixin controls-font {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+}
 
 .gridwrap {
   // without this we'll have a horizontal scrollbar
@@ -7,22 +13,32 @@ $board-border-color: #666;
 
 .header {
   .title {
-    border: 1px solid $board-border-color;
+    border: 1px solid $border-color;
+    border-radius: 4px;
     font-size: 2rem;
     font-weight: 700;
     padding: 1rem;
     text-align: center;
 
     .classic {
-      color: #ccc;
+      color: $darker-text;
       font-style: italic;
     }
   }
 }
 
 .subtitle {
-  color: #ccc;
+  color: $darker-text;
   font-size: 1rem;
   font-style: italic;
   font-weight: 400;
+}
+
+.controls {
+  @include controls-font;
+
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  margin: 1rem 0;
+  padding: 0 1rem;
 }

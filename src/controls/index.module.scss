@@ -1,23 +1,24 @@
-$controls-border-color: #666;
 @mixin controls-font {
   font-family: 'Open Sans', sans-serif;
   font-size: 1rem;
 }
 
-.controls {
-  @include controls-font;
-
-  border: 1px solid $controls-border-color;
-  margin: 1rem 0;
+.slider {
   padding: 0 1rem;
-
-  .slider {
-    padding: 0 1rem;
-  }
 }
 
 .gamepicker {
-  @include controls-font;
+  padding-right: .4rem;
+  width: 100%;
+
+  .pickseason {
+    @include controls-font;
+  }
+
+  .pickday {
+    @include controls-font;
+  }
+
 }
 
 .gamemenuitem {

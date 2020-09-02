@@ -1,18 +1,29 @@
 import React from 'react';
-import { Card, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import Game from './game';
 import { GameDataType } from '../types';
 
 interface Props {
+  streaming: string,
   turn: GameDataType
 }
 
-function ScoreBoard({ turn }: Props) {
+function ScoreBoard({ streaming, turn }: Props) {
   const schedule = turn?.schedule;
 
   if (!schedule) {
-    return (<Card>No Games</Card>);
-  } else {
+    if (streaming) {
+      return (
+        <Grid container alignContent="center" justify="center">
+          Loading game {streaming}
+        </Grid>
+      );
+    }
+    return (
+      <Grid container alignContent="center" justify="center">
+        Select a Season and Day of Blaseball to replay
+      </Grid>
+    );
   }
 
   return (

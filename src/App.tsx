@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, MutableRefObject } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Link } from '@material-ui/core';
 
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
 import ScoreBoard from './scoreboard';
@@ -28,7 +28,7 @@ function App() {
   const streaming = useRef('');
   const [turnNumber, setTurnNumber] = useState(0);
   const [playing, playBall] = useState(false);
-  const [dawdling, dawdle] = useState(4000); // min ms between pitches
+  const [dawdling, dawdle] = useState(1000); // ms between pitches
 
   const turn = turns.current[turnNumber];
 
@@ -122,25 +122,27 @@ function App() {
         <Grid item xs={12} md={6} className={styles.title}>
           Blaseball <span className={styles.classic}>Classic</span>
           <div className={styles.subtitle}>
-            Relive your favorite Blaseball Games
+            Relive your favorite <Link href="https://www.blaseball.com">Blaseball</Link> Games
           </div>
           <Grid item md={3} />
         </Grid>
       </Grid>
-      <Controls
-        dawdle={dawdle}
-        dawdling={dawdling}
-        day={day}
-        gameIndex={gameIndex}
-        playing={playing}
-        playBall={playBall}
-        turn={turn}
-        turnNumber={turnNumber}
-        season={season}
-        setDay={handleSetDay}
-        setSeason={handleSetSeason}
-      />
-      <ScoreBoard turn={turn} />
+      <Grid container className={styles.controls}>
+        <Controls
+          dawdle={dawdle}
+          dawdling={dawdling}
+          day={day}
+          gameIndex={gameIndex}
+          playing={playing}
+          playBall={playBall}
+          turn={turn}
+          turnNumber={turnNumber}
+          season={season}
+          setDay={handleSetDay}
+          setSeason={handleSetSeason}
+        />
+      </Grid >
+      <ScoreBoard streaming={streaming.current} turn={turn} />
     </div>
   );
 }
