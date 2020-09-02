@@ -1,0 +1,15 @@
+$base-color: #fff;
+
+.diamond {
+  height: 100%;
+  stroke: $base-color;
+  stroke-width: 2;
+
+  .empty {
+    fill: none;
+  }
+
+  .occupied {
+    fill: $base-color;
+  }
+}

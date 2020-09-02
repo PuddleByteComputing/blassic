@@ -1,4 +1,4 @@
-import { DivisionType, LeagueType, SubLeagueType } from './blaseball-api-types';
+import { DivisionType, LeagueType, SubLeagueType } from '../types';
 
 // * League/Subleague metadata
 // *

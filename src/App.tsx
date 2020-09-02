@@ -2,29 +2,11 @@ import React, { useEffect, useRef, useState, MutableRefObject } from 'react';
 import { Grid } from '@material-ui/core';
 
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
-import ScoreBoard from './scoreboard/ScoreBoard';
-import PlaybackControls from './PlaybackControls';
-import { GameDataType } from './lib/blaseball-api-types';
+import ScoreBoard from './scoreboard';
+import Controls from './controls/';
+import { GameDataType, GameMetaDataType, GameStoreType } from './types';
 
 import styles from './App.module.scss';
-
-interface GameStore {
-  data: {
-    [season: string]: {
-      [day: string]: GameDataType[]
-    },
-  },
-}
-
-export interface GameMetaData {
-  [season: string]: {
-    [day: string]: {
-      turns: number,
-      completed: boolean,
-      started: boolean,
-    }
-  }
-}
 
 async function openStream(season: string, day: string) {
   return fetch(`/forbidden-knowledge/${season}/${day}.txt`)
@@ -34,8 +16,8 @@ async function openStream(season: string, day: string) {
     .catch(error => console.error(error));
 }
 
-const initialGameState: GameStore = { data: {} };
-const initialGameIndex: GameMetaData = {};
+const initialGameState: GameStoreType = { data: {} };
+const initialGameIndex: GameMetaDataType = {};
 
 function App() {
   const [day, setDay] = useState('');
@@ -73,7 +55,6 @@ function App() {
 
   const retrieveData = () => {
     if (!(season && day)) { return; }
-    console.log(`retreiving s${season}d${day}`);
 
     if (gameCache.data?.[season]?.[day]) {
       turns.current = [...gameCache.data[season][day]];
@@ -104,6 +85,7 @@ function App() {
   };
 
   const fetchDay = (season: string, day: string) => {
+    // TODO: don't squash in-progress stream, if any
     streaming.current = `s${season}d${day}`;
     turns.current = [];
     openStream(season, day)
@@ -145,7 +127,7 @@ function App() {
           <Grid item md={3} />
         </Grid>
       </Grid>
-      <PlaybackControls
+      <Controls
         dawdle={dawdle}
         dawdling={dawdling}
         day={day}
