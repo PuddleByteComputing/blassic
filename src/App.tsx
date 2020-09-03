@@ -3,6 +3,7 @@ import { Grid, Link } from '@material-ui/core';
 
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
 import ScoreBoard from './scoreboard';
+import Splash from './Splash';
 import Controls from './controls/';
 import { GameDataType, GameMetaDataType, GameStoreType } from './types';
 
@@ -117,16 +118,6 @@ function App() {
 
   return (
     <div className={styles.gridwrap}>
-      <Grid container className={styles.header}>
-        <Grid item md={3} />
-        <Grid item xs={12} md={6} className={styles.title}>
-          Blaseball <span className={styles.classic}>Classic</span>
-          <div className={styles.subtitle}>
-            Relive your favorite <Link href="https://www.blaseball.com">Blaseball</Link> Games
-          </div>
-          <Grid item md={3} />
-        </Grid>
-      </Grid>
       <Grid container className={styles.controls}>
         <Controls
           dawdle={dawdle}
@@ -142,6 +133,7 @@ function App() {
           setSeason={handleSetSeason}
         />
       </Grid >
+      {!(season && day) ? <Splash /> : null}
       <ScoreBoard streaming={streaming.current} turn={turn} />
     </div>
   );
