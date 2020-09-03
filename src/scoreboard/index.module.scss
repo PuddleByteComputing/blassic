@@ -1,0 +1,66 @@
+$scoreboard: #4b5a51;
+
+@mixin leaguename {
+  background-color: $scoreboard;
+  font-family: 'Open Sans', serif;
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.header {
+  .good {
+    @include leaguename;
+    border-top-left-radius: 32px;
+    padding-right: 2rem;
+  }
+
+  .evil {
+    @include leaguename;
+    border-top-right-radius: 32px;
+    padding-left: 2rem;
+  }
+
+  .goodspace {
+    background-color: $scoreboard;
+    height: 50%;
+
+    .goodmask {
+      border-bottom-right-radius: 4px;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  .goodshoulder {
+    background-color: $scoreboard;
+    border-top-left-radius: 16px;
+    height: 50%;
+  }
+
+  .evilspace {
+    background-color: $scoreboard;
+    height: 50%;
+
+    .evilmask {
+      border-bottom-left-radius: 4px;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  .evilshoulder {
+    background-color: $scoreboard;
+    border-top-right-radius: 16px;
+    height: 50%;
+  }
+}
+
+.green {
+  background-color: $scoreboard;
+}
+
+.scoreboard {
+  background-color: $scoreboard;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}

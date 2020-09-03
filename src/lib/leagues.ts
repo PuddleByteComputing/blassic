@@ -1,4 +1,4 @@
-import { DivisionType, LeagueType, SubLeagueType } from '../types';
+import { DivisionType, LeagueType, SubLeagueType, UUID } from '../types';
 
 // * League/Subleague metadata
 // *
@@ -27,6 +27,9 @@ export const leagues: { [id: string]: LeagueType } = {
     "tiebreakers": "72a618ed-c61c-4162-a455-3959a2d0e738"
   }
 };
+
+export const goodLeagueId = "7d3a3dd6-9ea1-4535-9d91-bde875c85e80";
+export const evilLeagueId = "93e58443-9617-44d4-8561-e254a1dbd450";
 
 export const subleagues: { [id: string]: SubLeagueType } = {
   "7d3a3dd6-9ea1-4535-9d91-bde875c85e80": {
@@ -95,7 +98,7 @@ export const allDivisions: DivisionType[] = [
 ];
 
 // Put it all together
-type CombinedSubLeagueDataType = { divisions: DivisionType[] }
+type CombinedSubLeagueDataType = { divisions: DivisionType[], id: UUID, name: string }
 type CombinedSubLeaguesDataType = { [id: string]: CombinedSubLeagueDataType }
 type CombinedLeagueDataType = { [id: string]: { subleagues: CombinedSubLeaguesDataType } }
 const combineLeaguesData = (): CombinedLeagueDataType =>
@@ -132,3 +135,9 @@ export const teamsToLeagues = Object.values(subLeaguesData)
       )
   )
   .reduce((memo, record) => ({ ...memo, ...record }), {});
+
+export const teamIsEvil = (teamId: UUID) =>
+  (teamsToLeagues[teamId]?.subLeague?.id === evilLeagueId);
+
+export const teamIsGood = (teamId: UUID) =>
+  (teamsToLeagues[teamId]?.subLeague?.id === goodLeagueId);
