@@ -1,9 +1,15 @@
-$teams-line-height: 2.6rem;
+@import '../../colors';
 
 @mixin teamlogo {
-  line-height: $teams-line-height;
-  margin-right: .4rem;
+  height: 100%;
   padding: 0 .4rem;
+}
+
+@mixin odds {
+  font-family: 'Open Sans', sans-serif;
+  font-size: .8rem;
+  font-style: italic;
+  padding-left: .2rem;
 }
 
 .scorecard {
@@ -15,7 +21,6 @@ $teams-line-height: 2.6rem;
     font-family: 'Lora', serif;
     font-size: 1.6rem;
     font-variant: small-caps;
-    line-height: $teams-line-height;
 
     .inning {
       font-family: 'Open Sans', sans-serif;
@@ -48,11 +53,21 @@ $teams-line-height: 2.6rem;
       border-bottom-left-radius: 8px;
     }
 
-    .odds {
-      font-family: 'Open Sans', sans-serif;
-      font-size: .8rem;
-      font-style: italic;
-      line-height: 2.4rem;
+    .teamrecord {
+      @include odds;
+      color: $grey-300;
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .goododds {
+      @include odds;
+      color: $light-green-200;
+    }
+
+    .badodds {
+      @include odds;
+      color: $red-200;
     }
 
     .score {

@@ -2,40 +2,31 @@ import React from 'react';
 import { Grid, Hidden } from '@material-ui/core';
 import { useTheme } from '@material-ui/styles';
 import Game from './game';
-import { GameDataType, GameTurnType } from '../types';
+import { GameDataType, GamePlayType } from '../types';
 import { teamIsGood, teamIsEvil } from '../lib/leagues';
+import { mapTeamsToStandings, playComparator } from '../lib/gamedata-utils';
+import { isAbomination } from '../lib/play-utils';
 import styles from './index.module.scss';
 
 interface Props {
   streaming: string,
-  turn: GameDataType
+  turn?: GameDataType,
 }
 
 function ScoreBoard({ streaming, turn }: Props) {
   const theme = useTheme();
+  if (!turn) { return <></>; }
+
   const bgColor = theme.palette.background.default;
+  const teamStandingsMap = mapTeamsToStandings(turn);
+  const gameMap: { [teamId: string]: number } = turn.schedule.reduce((memo, play, idx) => ({ ...memo, [play.homeTeam]: idx }), {});
+  const sorter = playComparator(turn);
+  const sortedPlays = Object.keys(gameMap || {})
+    .map((teamId) => turn.schedule[gameMap[teamId]])
+    .sort(sorter);
 
-  const schedule = turn?.schedule;
-  const gameMap: { [teamId: string]: number } = schedule?.reduce((memo, play, idx) => ({ ...memo, [play.homeTeam]: idx }), {});
-  const goodHomeTeams = Object.keys(gameMap || {})?.filter(teamIsGood);
-  const evilHomeTeams = Object.keys(gameMap || {})?.filter(teamIsEvil);
-
-  const isAbomination = (play: GameTurnType) => teamIsEvil(play.awayTeam) === teamIsGood(play.homeTeam);
-
-  if (!schedule) {
-    if (streaming) {
-      return (
-        <Grid item container alignContent="center" justify="center">
-          Loading game {streaming}
-        </Grid>
-      );
-    }
-    return (
-      <Grid item container alignContent="center" justify="center">
-        Select a Season and Day of Blaseball to replay
-      </Grid>
-    );
-  }
+  const goodGames = sortedPlays.filter((play) => teamIsGood(play.homeTeam));
+  const evilGames = sortedPlays.filter((play) => teamIsEvil(play.homeTeam));
 
   return (
     <>
@@ -68,14 +59,13 @@ function ScoreBoard({ streaming, turn }: Props) {
           </Hidden>
         </Grid>
       </Hidden>
-      <Grid container justify="center" className={styles.scoreboard}>
+      <Grid container className={styles.scoreboard}>
         <Grid container item xs={12} sm={6} lg={5} direction="column">
-          {goodHomeTeams.map((teamId) => (
-            <Grid item container key={teamId}>
-              <Game
-                abominable={isAbomination(turn.schedule[gameMap[teamId]])}
-                play={turn?.schedule?.[gameMap[teamId]]}
-              />
+          {goodGames.map((play) => (
+            <Grid item container key={play.homeTeam}>
+              <Game play={play}
+                awayTeamStandings={teamStandingsMap[play.awayTeam]}
+                homeTeamStandings={teamStandingsMap[play.homeTeam]} />
             </Grid>
           ))}
         </Grid>
@@ -83,14 +73,18 @@ function ScoreBoard({ streaming, turn }: Props) {
           <Grid item container lg={2} />
         </Hidden>
         <Grid container item xs={12} sm={6} lg={5} direction="column">
-          {evilHomeTeams.map((teamId) => (
-            <Grid item container key={teamId}>
-              <Game
-                abominable={isAbomination(turn.schedule[gameMap[teamId]])}
-                play={turn?.schedule?.[gameMap[teamId]]}
-              />
+          {evilGames.map((play) => (
+            <Grid item container key={play.homeTeam}>
+              <Game play={play}
+                awayTeamStandings={teamStandingsMap[play.awayTeam]}
+                homeTeamStandings={teamStandingsMap[play.homeTeam]} />
             </Grid>
           ))}
+          {turn.schedule.some((play) => isAbomination(play)) ? (
+            <Grid item container alignContent="center" justify="flex-end" className={styles.footnote}>
+              * abomination
+            </Grid>)
+            : null}
         </Grid>
       </Grid>
     </>

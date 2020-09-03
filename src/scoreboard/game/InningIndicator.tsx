@@ -1,6 +1,6 @@
 import React from 'react';
 import ordinal from '../../lib/ordinal';
-import { GameTurnType } from '../../types';
+import { GamePlayType } from '../../types';
 import styles from './InningIndicator.module.scss';
 
 
@@ -13,7 +13,7 @@ function ExtraInnings({ inning }: { inning: number }) {
 }
 
 interface Props {
-  play: GameTurnType
+  play: GamePlayType
 }
 
 function InningIndicator({ play }: Props) {

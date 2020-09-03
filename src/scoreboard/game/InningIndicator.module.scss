@@ -1,3 +1,5 @@
+@import '../../colors';
+
 @mixin inning-box {
   border-bottom-left-radius: 8px;
   border-top-left-radius: 4px;
@@ -12,13 +14,13 @@
 .upcoming {
   @include inning-box;
 
-  background-color: #666;
+  background-color: $grey-600;
 }
 
 .playing {
   @include inning-box;
 
-  background-color: green;
+  background-color: $light-green-800;
 
   .uparrow {
     font-size: .7rem;
@@ -42,7 +44,7 @@
 .final {
   @include inning-box;
 
-  background-color: red;
+  background-color: $red-800;
   border-top-left-radius: 8px;
 
   .extrainnings {

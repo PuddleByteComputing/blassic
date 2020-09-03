@@ -65,8 +65,8 @@ export interface SimType {
 }
 
 export interface StandingsType {
-  losses: { [teamId: string]: number }[],
-  wins: { [teamId: string]: number }[],
+  losses: { [teamId: string]: number },
+  wins: { [teamId: string]: number },
 }
 
 interface PlayoffsType {
@@ -112,7 +112,7 @@ export interface PostSeasonType {
   tomorrowRound: RoundType,
 }
 
-export interface GameTurnType {
+export interface GamePlayType {
   atBatBalls: number,
   atBatStrikes: number,
   awayBatter: UUID | null,
@@ -169,9 +169,9 @@ export interface GameTurnType {
 
 export interface GameDataType {
   postseason: PostSeasonType,
-  schedule: GameTurnType[],
+  schedule: GamePlayType[],
   season: SeasonType,
   sim: SimType,
   standings: StandingsType,
-  tomorrowSchedule: GameTurnType[],
+  tomorrowSchedule: GamePlayType[],
 };

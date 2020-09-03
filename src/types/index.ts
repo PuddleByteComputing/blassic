@@ -18,3 +18,13 @@ export interface GameMetaDataType {
     }
   }
 }
+
+export interface TeamStandingsType {
+  l: number,
+  w: number,
+  avg: number
+}
+
+export interface StandingsMapType {
+  [teamId: string]: TeamStandingsType
+}
