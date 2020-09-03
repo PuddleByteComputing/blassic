@@ -8,7 +8,7 @@ const theme = createMuiTheme({
     secondary: cyan,
   },
   typography: {
-    fontFamily: ['"Lora"', '"Courier New"', 'monospace', 'serif'].join(','),
+    fontFamily: ['"Lora"', 'serif'].join(','),
     fontSize: 18,
   },
 });
