@@ -1,17 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FormControl, Grid, MenuItem, Select } from '@material-ui/core';
-import { GameMetaDataType } from '../types';
+import { gameDataContext } from '../GameDataProvider';
 import styles from './index.module.scss';
 
-interface Props {
-  day: string,
-  gameIndex: GameMetaDataType,
-  season: string,
-  setDay: (day: string) => void,
-  setSeason: (season: string) => void,
-}
+function GameSelect() {
+  const { available, day, season, setDay, setSeason } = useContext(gameDataContext);
 
-function GameSelect({ gameIndex, day, setDay, season, setSeason }: Props) {
   const handleSetSeason = (e: any): void => setSeason(e.target.value);
   const handleSetDay = (e: any): void => setDay(e.target.value);
 
@@ -28,7 +22,7 @@ function GameSelect({ gameIndex, day, setDay, season, setSeason }: Props) {
             <MenuItem value="" key="seasonPlaceholder" className={styles.gamemenuitem}>
               Select Season
               </MenuItem>
-            {Object.keys(gameIndex).map((availableSeason) =>
+            {Object.keys(available).map((availableSeason) =>
               <MenuItem
                 className={styles.gamemenuitem}
                 key={availableSeason}
@@ -52,7 +46,7 @@ function GameSelect({ gameIndex, day, setDay, season, setSeason }: Props) {
             <MenuItem value="" key="dayPlaceholder" className={styles.gamemenuitem}>
               Select Day
               </MenuItem>
-            {season && Object.keys(gameIndex[season]).map((availableDay) =>
+            {season && Object.keys(available[season]).map((availableDay) =>
               <MenuItem
                 className={styles.gamemenuitem}
                 key={availableDay}

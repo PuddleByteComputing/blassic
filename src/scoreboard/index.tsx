@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Grid, Hidden } from '@material-ui/core';
 import { useTheme } from '@material-ui/styles';
+import { gameDataContext } from '../GameDataProvider';
 import Game from './game';
-import { GameDataType } from '../types';
 import { teamIsGood, teamIsEvil } from '../lib/leagues';
 import { mapTeamsToStandings, playComparator } from '../lib/gamedata-utils';
 import { isAbomination } from '../lib/play-utils';
 import styles from './index.module.scss';
 
 interface Props {
-  streaming: string,
-  turn?: GameDataType,
+  turnNumber: number,
 }
 
-function ScoreBoard({ turn }: Props) {
+function ScoreBoard({ turnNumber }: Props) {
   const theme = useTheme();
+  const { turns } = useContext(gameDataContext);
+  const turn = turns[turnNumber];
   if (!turn) { return <></>; }
 
   const bgColor = theme.palette.background.default;

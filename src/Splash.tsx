@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Grid, Hidden, Link } from '@material-ui/core';
+import { gameDataContext } from './GameDataProvider';
 import styles from './App.module.scss';
 
 function Splash() {
+  const { season, day } = useContext(gameDataContext);
+  if (season && day) {
+    return (<></>);
+  }
+
   return (
     <Grid container className={styles.splash}>
       <Grid item md={3} />

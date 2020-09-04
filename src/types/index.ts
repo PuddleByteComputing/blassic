@@ -1,7 +1,7 @@
 import { GameDataType } from './blaseball-api';
 export * from './blaseball-api';
 
-export interface GameStoreType {
+export interface GameCacheType {
   data: {
     [season: string]: {
       [day: string]: GameDataType[]

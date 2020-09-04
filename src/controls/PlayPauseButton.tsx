@@ -2,7 +2,6 @@ import React from 'react';
 import { IconButton } from '@material-ui/core';
 import { PlayCircleFilled, PauseCircleFilled, Replay } from '@material-ui/icons';
 
-import { GameDataType } from '../types';
 import styles from './index.module.scss';
 
 const PauseButton = ({ pause }: { pause: () => void }) => (
@@ -11,7 +10,7 @@ const PauseButton = ({ pause }: { pause: () => void }) => (
     onClick={(event) => { event.stopPropagation(); pause(); }}
     onFocus={(event) => event.stopPropagation()}
   >
-    <PauseCircleFilled />
+    <PauseCircleFilled fontSize="large" />
   </IconButton>
 );
 
@@ -40,18 +39,18 @@ interface Props {
   playing: boolean,
   playBall: (val: boolean) => void,
   turnNumber: number,
-  turns: GameDataType[],
+  turnCount: number,
   setTurnNumber: (val: number) => void,
 }
 
-function PlayPauseButton({ playing, playBall, turnNumber, setTurnNumber, turns }: Props) {
+function PlayPauseButton({ playing, playBall, turnNumber, setTurnNumber, turnCount }: Props) {
   if (playing) {
     return (<PauseButton pause={() => playBall(false)} />);
-  } else if (turns?.length && turnNumber >= turns.length - 1) {
+  } else if (turnCount && turnNumber >= turnCount - 1) {
     return (<ReplayButton replay={() => { setTurnNumber(0); playBall(true); }} />);
   }
 
-  return (<PlayButton play={() => playBall(true)} disabled={!turns?.length} />);
+  return (<PlayButton play={() => playBall(true)} disabled={!turnCount} />);
 }
 
 export default PlayPauseButton;

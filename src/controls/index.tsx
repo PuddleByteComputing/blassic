@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Grid } from '@material-ui/core';
 
+import { gameDataContext } from '../GameDataProvider';
 import GameSelect from './GameSelect';
 import PlayPauseButton from './PlayPauseButton';
 import Speed from './Speed';
 import RewindButton from './RewindButton';
-import { GameDataType, GameMetaDataType } from '../types';
 
 import { IconButton } from '@material-ui/core';
-import { FastForward, FastRewind, SkipNext, SkipPrevious } from '@material-ui/icons';
+import { FastForward, SkipNext, SkipPrevious } from '@material-ui/icons';
 
 function SkipBackButton() {
   return (
@@ -47,38 +47,28 @@ function SkipForwardButton() {
 }
 
 interface Props {
-  day: string,
   dawdle: (val: number) => void,
   dawdling: number,
-  gameIndex: GameMetaDataType,
   playing: boolean,
   playBall: (val: boolean) => void,
-  setDay: (val: string) => void,
-  setSeason: (val: string) => void,
-  turns: GameDataType[],
-  turnNumber: number,
-  season: string,
   setTurnNumber: (val: number) => void,
+  turnNumber: number,
 }
 
 function Controls({
   dawdle,
   dawdling,
-  gameIndex,
   playing,
   playBall,
-  day,
-  season,
-  setSeason,
-  setDay,
   setTurnNumber,
   turnNumber,
-  turns
 }: Props) {
+  const { turnCount } = useContext(gameDataContext);
+
   return (
     <>
       <Grid item container alignContent="center" xs={12} sm={4}>
-        <GameSelect gameIndex={gameIndex} day={day} setDay={setDay} season={season} setSeason={setSeason} />
+        <GameSelect />
       </Grid>
       <Grid item container xs={12} sm={4} alignContent="center" justify="center">
         <SkipBackButton />
@@ -88,7 +78,7 @@ function Controls({
           playBall={playBall}
           setTurnNumber={setTurnNumber}
           turnNumber={turnNumber}
-          turns={turns}
+          turnCount={turnCount}
         />
         <FastForwardButton />
         <SkipForwardButton />
