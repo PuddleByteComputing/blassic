@@ -25,6 +25,7 @@ function App() {
   const [season, setSeason] = useState('');
   const [gameIndex, setGameIndex] = useState(initialGameIndex);
   const [gameCache, updateGames] = useState(initialGameState);
+  const ticking = useRef(false);
   const turns: MutableRefObject<GameDataType[]> = useRef([]);
   const streaming = useRef('');
   const [turnNumber, setTurnNumber] = useState(0);
@@ -37,10 +38,18 @@ function App() {
   const clock = () => {
     if (playing) {
       if (turnNumber < turns.current.length - 1) {
-        setTimeout(() => setTurnNumber(turnNumber + 1), dawdling.current);
-      } else if (streaming.current) {
-        setTimeout(() => playBall(playing), 20); // using playBall() to trigger re-render
+        if (!ticking.current) {
+          ticking.current = true;
+          setTimeout(() => {
+            ticking.current = false;
+            setTurnNumber(turnNumber + 1);
+          }, dawdling.current);
+        }
       }
+    } else if (streaming.current) {
+      setTimeout(() => playBall(playing), 20); // using playBall() to trigger re-render
+    } else if (turnNumber >= turns.current.length - 1) {
+      playBall(false);
     }
   };
 
@@ -127,11 +136,12 @@ function App() {
           gameIndex={gameIndex}
           playing={playing}
           playBall={playBall}
-          turn={turn}
+          turns={turns.current}
           turnNumber={turnNumber}
           season={season}
           setDay={handleSetDay}
           setSeason={handleSetSeason}
+          setTurnNumber={setTurnNumber}
         />
       </Grid >
       {!(season && day) ? <Splash /> : null}
