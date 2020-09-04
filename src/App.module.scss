@@ -1,5 +1,4 @@
-$border-color: #666;
-$darker-text: #ccc;
+@import './colors';
 
 @mixin controls-font {
   font-family: 'Open Sans', sans-serif;
@@ -13,8 +12,8 @@ $darker-text: #ccc;
 
 .splash {
   .title {
-    background-color: #4b5a51;
-    border: 1px solid $border-color;
+    background-color: $wiggly-green;
+    border: 1px solid $grey-600;
     border-radius: 8px;
     font-size: 2rem;
     font-weight: 700;
@@ -23,14 +22,14 @@ $darker-text: #ccc;
     text-align: center;
 
     .classic {
-      color: $darker-text;
+      color: $grey-400;
       font-style: italic;
     }
   }
 }
 
 .subtitle {
-  color: $darker-text;
+  color: $grey-400;
   font-size: 1rem;
   font-style: italic;
   font-weight: 400;
@@ -39,7 +38,7 @@ $darker-text: #ccc;
 .controls {
   @include controls-font;
 
-  border: 1px solid $border-color;
+  border: 1px solid $grey-600;
   border-radius: 4px;
   margin: .4rem auto;
   padding: 0 1rem;

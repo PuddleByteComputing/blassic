@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Hidden } from '@material-ui/core';
 import { useTheme } from '@material-ui/styles';
 import Game from './game';
-import { GameDataType, GamePlayType } from '../types';
+import { GameDataType } from '../types';
 import { teamIsGood, teamIsEvil } from '../lib/leagues';
 import { mapTeamsToStandings, playComparator } from '../lib/gamedata-utils';
 import { isAbomination } from '../lib/play-utils';
@@ -13,7 +13,7 @@ interface Props {
   turn?: GameDataType,
 }
 
-function ScoreBoard({ streaming, turn }: Props) {
+function ScoreBoard({ turn }: Props) {
   const theme = useTheme();
   if (!turn) { return <></>; }
 

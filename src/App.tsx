@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, MutableRefObject } from 'react';
-import { Grid, Link } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
 import ScoreBoard from './scoreboard';
@@ -29,21 +29,22 @@ function App() {
   const streaming = useRef('');
   const [turnNumber, setTurnNumber] = useState(0);
   const [playing, playBall] = useState(false);
-  const [dawdling, dawdle] = useState(1000); // ms between pitches
+  const dawdling = useRef(1000); // ms between pitches
+  const dawdle = (val: number) => dawdling.current = val;
 
   const turn = turns.current[turnNumber];
 
   const clock = () => {
     if (playing) {
       if (turnNumber < turns.current.length - 1) {
-        setTimeout(() => setTurnNumber(turnNumber + 1), dawdling);
+        setTimeout(() => setTurnNumber(turnNumber + 1), dawdling.current);
       } else if (streaming.current) {
         setTimeout(() => playBall(playing), 20); // using playBall() to trigger re-render
       }
     }
   };
 
-  useEffect(clock, [playing, turnNumber, dawdling]);
+  useEffect(clock, [playing, turnNumber]);
 
   const fetchGameIndex = () => {
     fetch('/forbidden-knowledge/index.json')
@@ -121,7 +122,7 @@ function App() {
       <Grid container className={styles.controls}>
         <Controls
           dawdle={dawdle}
-          dawdling={dawdling}
+          dawdling={dawdling.current}
           day={day}
           gameIndex={gameIndex}
           playing={playing}

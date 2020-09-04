@@ -38,7 +38,7 @@
 .shame {
   @include inning-box;
 
-  background-color: purple;
+  background-color: $purple-600;
 }
 
 .final {
@@ -53,6 +53,7 @@
 }
 
 .finalshame {
+  color: $purple-100;
   font-family: 'Lora', serif;
   font-style: italic;
   margin-left: .4rem;

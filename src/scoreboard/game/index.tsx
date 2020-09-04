@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 import Bases from './Bases';
 import BallStrikeOut from './BallStrikeOut';
@@ -45,7 +45,7 @@ function Game({ awayTeamStandings, homeTeamStandings, play }: Props) {
                   {Math.round(play.awayOdds * 100)}%
                 </Grid>
               </Grid>
-              <Grid item xs={8} alignContent="center">
+              <Grid item container xs={8} alignContent="center">
                 {play.awayTeamNickname}
               </Grid>
             </Grid>
@@ -66,7 +66,7 @@ function Game({ awayTeamStandings, homeTeamStandings, play }: Props) {
                   {homeTeamStandings.w}-{homeTeamStandings.l}
                 </Grid>
               </Grid>
-              <Grid item xs={8} alignContent="center">
+              <Grid item container xs={8} alignContent="center">
                 {play.homeTeamNickname}
               </Grid>
             </Grid>

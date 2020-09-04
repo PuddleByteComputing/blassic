@@ -1,4 +1,6 @@
-$base-color: #fff;
+@import '../../colors';
+
+$base-color: $grey-50;
 
 .diamond {
   height: 100%;

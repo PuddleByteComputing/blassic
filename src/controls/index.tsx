@@ -1,11 +1,10 @@
-import React, { ChangeEvent, useState } from 'react';
+import React from 'react';
 import { Grid } from '@material-ui/core';
 
 import GameSelect from './GameSelect';
 import PlayPauseButton from './PlayPauseButton';
 import Speed from './Speed';
 import { GameDataType, GameMetaDataType } from '../types';
-import styles from './index.module.scss';
 
 interface Props {
   day: string,
@@ -22,7 +21,7 @@ interface Props {
 }
 
 
-function Controls({ dawdle, dawdling, gameIndex, playing, playBall, turn, turnNumber, day, season, setSeason, setDay }: Props) {
+function Controls({ dawdle, dawdling, gameIndex, playing, playBall, day, season, setSeason, setDay }: Props) {
 
   return (
     <>

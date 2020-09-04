@@ -32,7 +32,7 @@ function InningIndicator({ play }: Props) {
             <ExtraInnings inning={play.inning} />
           </span>
         </div>
-        <div className={styles.finalshame}>{play.shame ? `The ${play.awayTeamNickname} were shamed!` : ''}</div>
+        <div className={styles.finalshame}>{play.shame ? `Shame!` : ''}</div>
       </>
     );
   } else if (play.shame) {
