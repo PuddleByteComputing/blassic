@@ -4,7 +4,7 @@ import { gameDataContext } from '../GameDataProvider';
 import styles from './index.module.scss';
 
 function GameSelect() {
-  const { available, day, season, setDay, setSeason } = useContext(gameDataContext);
+  const { available, day, season, setDay, setSeason, streaming } = useContext(gameDataContext);
 
   const handleSetSeason = (e: any): void => {
     setDay('');
@@ -42,7 +42,7 @@ function GameSelect() {
         <FormControl className={styles.gamepicker}>
           <Select
             classes={{ root: styles.pickday }}
-            disabled={!season}
+            disabled={!(season && !streaming)}
             displayEmpty
             onChange={handleSetDay}
             value={day}

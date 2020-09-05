@@ -30,7 +30,6 @@ function ClockProvider({ children }: { children: React.ReactNode }) {
   const [turnNumber, setTurnNumber] = useState(0);
   const [playing, playBall] = useState(false);
   const dawdling = useRef(1000); // ms between pitches
-  const dawdle = (val: number) => dawdling.current = val;
 
   const stopTicking: () => ReturnType<typeof setTimeout> | null = () => {
     if (ticking.current) {
@@ -45,7 +44,7 @@ function ClockProvider({ children }: { children: React.ReactNode }) {
   const advanceClock = () => {
     if (turnNumber + 1 >= turnCount) {
       if (streaming) {
-        // turnCount is incomplete, wait for moar buffar
+        // game data is still loading, wait for moar buffar
         ticking.current = setTimeout(advanceClock, 10);
       } else {
         // reached end of game
@@ -73,7 +72,21 @@ function ClockProvider({ children }: { children: React.ReactNode }) {
     setTurnNumber(val);
   }
 
-  const api = { dawdle, dawdling: dawdling.current, playing, playBall, turnNumber, setTurnNumber: externalSetTurnNumber };
+  function dawdle(val: number) {
+    const wasTicking = stopTicking();
+    dawdling.current = val;
+    if (wasTicking) { tick(); }
+  }
+
+  const api = {
+    dawdle,
+    dawdling: dawdling.current,
+    playing,
+    playBall,
+    turnNumber,
+    setTurnNumber: externalSetTurnNumber
+  };
+
   return (<Provider value={api}>{children}</Provider>);
 }
 

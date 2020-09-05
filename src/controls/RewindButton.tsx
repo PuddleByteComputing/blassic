@@ -1,14 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { IconButton } from '@material-ui/core';
 import { FastRewind } from '@material-ui/icons';
+import { clockContext } from '../ClockProvider';
 
-interface Props {
-  playing: boolean,
-  setTurnNumber: (val: number) => void,
-  turnNumber: number,
-}
+function RewindButton() {
+  const { playing, turnNumber, setTurnNumber } = useContext(clockContext);
 
-function RewindButton({ playing, setTurnNumber, turnNumber }: Props) {
   const rewind = () => {
     if (playing) {
       setTurnNumber(Math.max(0, turnNumber - 10));

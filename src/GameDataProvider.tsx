@@ -2,26 +2,25 @@ import React, { createContext, useEffect, useRef, useState } from 'react';
 import { GameDataType, GameMetaDataType, GameCacheType } from './types';
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
 
-const initialGameCache: GameCacheType = { data: {} };
-const initialAvailableGames: GameMetaDataType = {};
 interface GameDataProviderApi {
   available: GameMetaDataType,
-  cache: GameCacheType,
   day: string,
   season: string,
-  setDay: (day: string) => void,
+  setDay: (day: string | number) => void,
   setSeason: (season: string) => void,
   streaming: string,
   turnCount: number,
   turns: GameDataType[],
 }
 
+const initialGameCache: GameCacheType = { data: {} };
+const initialAvailableGames: GameMetaDataType = {};
+
 const initialState: GameDataProviderApi = {
-  available: {},
-  cache: { data: {} },
+  available: initialAvailableGames,
   day: '',
   season: '',
-  setDay: (_day: string) => null,
+  setDay: (_day: string | number) => null,
   setSeason: (_season: string) => null,
   streaming: '',
   turnCount: 0,
@@ -88,7 +87,7 @@ function GameDataProvider({ children }: Props) {
           }
 
           turns.current.push(JSON.parse(result.value));
-          // re-render only on first and then every 10th received line
+          // while streaming gameData, re-render only on first and then every 10th received line
           if (turns.current.length % 10 === 1) {
             updateTurnCount(turns.current.length);
           }
@@ -112,8 +111,20 @@ function GameDataProvider({ children }: Props) {
   useEffect(fetchAvailableGames, []); // retrieve available games index on mount
   useEffect(setGame, [season, day]); // get game data from cache or network when season/day change
 
-  const exposed = { available, cache, day, season, setDay, setSeason, streaming: streaming.current, turnCount, turns: turns.current };
-  return <Provider value={exposed}>{children}</Provider>;
+  const externalSetDay = (val: string | number) => setDay(val.toString());
+
+  const api = {
+    available,
+    day,
+    season,
+    setDay: externalSetDay,
+    setSeason,
+    streaming: streaming.current,
+    turnCount,
+    turns: turns.current
+  };
+
+  return <Provider value={api}>{children}</Provider>;
 }
 
 export default GameDataProvider;

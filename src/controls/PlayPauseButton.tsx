@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { IconButton } from '@material-ui/core';
 import { PlayCircleFilled, PauseCircleFilled, Replay } from '@material-ui/icons';
-
+import { clockContext } from '../ClockProvider';
 import styles from './index.module.scss';
 
 const PauseButton = ({ pause }: { pause: () => void }) => (
@@ -31,22 +31,20 @@ const ReplayButton = ({ replay }: { replay: () => void }) => (
     onClick={(event) => { event.stopPropagation(); replay(); }}
     onFocus={(event) => event.stopPropagation()}
   >
-    <Replay />
+    <Replay fontSize="large" />
   </IconButton>
 );
 
 interface Props {
-  playing: boolean,
-  playBall: (val: boolean) => void,
-  turnNumber: number,
   turnCount: number,
-  setTurnNumber: (val: number) => void,
 }
 
-function PlayPauseButton({ playing, playBall, turnNumber, setTurnNumber, turnCount }: Props) {
+function PlayPauseButton({ turnCount }: Props) {
+  const { playing, playBall, turnNumber, setTurnNumber } = useContext(clockContext);
+
   if (playing) {
     return (<PauseButton pause={() => playBall(false)} />);
-  } else if (turnCount && turnNumber >= turnCount - 1) {
+  } else if (turnCount && (turnNumber >= turnCount - 1)) {
     return (<ReplayButton replay={() => { setTurnNumber(0); playBall(true); }} />);
   }
 
