@@ -11,6 +11,7 @@ interface GameDataProviderApi {
   season: string,
   setDay: (day: string) => void,
   setSeason: (season: string) => void,
+  streaming: string,
   turnCount: number,
   turns: GameDataType[],
 }
@@ -22,6 +23,7 @@ const initialState: GameDataProviderApi = {
   season: '',
   setDay: (_day: string) => null,
   setSeason: (_season: string) => null,
+  streaming: '',
   turnCount: 0,
   turns: [],
 };
@@ -80,8 +82,8 @@ function GameDataProvider({ children }: Props) {
 
         lineReader.read().then(function processLine(result) {
           if (result.done) {
+            streaming.current = ''; // set ref value *before* triggering re-render via cacheGame()
             cacheGame();
-            streaming.current = '';
             return;
           }
 
@@ -101,6 +103,7 @@ function GameDataProvider({ children }: Props) {
 
     if (cache.data?.[season]?.[day]) {
       turns.current = [...cache.data[season][day]];
+      updateTurnCount(turns.current.length);
     } else if (!streaming.current && season && day) {
       fetchGame(season, day);
     }
@@ -109,7 +112,7 @@ function GameDataProvider({ children }: Props) {
   useEffect(fetchAvailableGames, []); // retrieve available games index on mount
   useEffect(setGame, [season, day]); // get game data from cache or network when season/day change
 
-  const exposed = { available, cache, day, season, setDay, setSeason, turnCount, turns: turns.current };
+  const exposed = { available, cache, day, season, setDay, setSeason, streaming: streaming.current, turnCount, turns: turns.current };
   return <Provider value={exposed}>{children}</Provider>;
 }
 

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Grid } from '@material-ui/core';
 
 import { gameDataContext } from '../GameDataProvider';
+import { clockContext } from '../ClockProvider';
 import GameSelect from './GameSelect';
 import PlayPauseButton from './PlayPauseButton';
 import Speed from './Speed';
@@ -46,24 +47,9 @@ function SkipForwardButton() {
   );
 }
 
-interface Props {
-  dawdle: (val: number) => void,
-  dawdling: number,
-  playing: boolean,
-  playBall: (val: boolean) => void,
-  setTurnNumber: (val: number) => void,
-  turnNumber: number,
-}
-
-function Controls({
-  dawdle,
-  dawdling,
-  playing,
-  playBall,
-  setTurnNumber,
-  turnNumber,
-}: Props) {
+function Controls() {
   const { turnCount } = useContext(gameDataContext);
+  const { dawdle, dawdling, playing, playBall, setTurnNumber, turnNumber } = useContext(clockContext);
 
   return (
     <>
@@ -82,6 +68,7 @@ function Controls({
         />
         <FastForwardButton />
         <SkipForwardButton />
+        {turnNumber + 1}/{turnCount}
       </Grid>
       <Grid item container xs={12} sm={4} alignContent="center">
         <Speed dawdling={dawdling} dawdle={dawdle} />

@@ -4,8 +4,8 @@ import { gameDataContext } from './GameDataProvider';
 import styles from './App.module.scss';
 
 function Splash() {
-  const { season, day } = useContext(gameDataContext);
-  if (season && day) {
+  const { turns } = useContext(gameDataContext);
+  if (turns.length > 0) {
     return (<></>);
   }
 

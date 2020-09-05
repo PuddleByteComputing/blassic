@@ -6,7 +6,11 @@ import styles from './index.module.scss';
 function GameSelect() {
   const { available, day, season, setDay, setSeason } = useContext(gameDataContext);
 
-  const handleSetSeason = (e: any): void => setSeason(e.target.value);
+  const handleSetSeason = (e: any): void => {
+    setDay('');
+    setSeason(e.target.value);
+  };
+
   const handleSetDay = (e: any): void => setDay(e.target.value);
 
   return (

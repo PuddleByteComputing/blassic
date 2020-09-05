@@ -2,19 +2,17 @@ import React, { useContext } from 'react';
 import { Grid, Hidden } from '@material-ui/core';
 import { useTheme } from '@material-ui/styles';
 import { gameDataContext } from '../GameDataProvider';
+import { clockContext } from '../ClockProvider';
 import Game from './game';
 import { teamIsGood, teamIsEvil } from '../lib/leagues';
 import { mapTeamsToStandings, playComparator } from '../lib/gamedata-utils';
 import { isAbomination } from '../lib/play-utils';
 import styles from './index.module.scss';
 
-interface Props {
-  turnNumber: number,
-}
-
-function ScoreBoard({ turnNumber }: Props) {
-  const theme = useTheme();
+function ScoreBoard() {
+  const { turnNumber } = useContext(clockContext);
   const { turns } = useContext(gameDataContext);
+  const theme = useTheme();
   const turn = turns[turnNumber];
   if (!turn) { return <></>; }
 
