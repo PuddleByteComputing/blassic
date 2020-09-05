@@ -1,17 +1,22 @@
 import React, { useContext } from 'react';
 import { FormControl, Grid, MenuItem, Select } from '@material-ui/core';
 import { gameDataContext } from '../GameDataProvider';
+import { clockContext } from '../ClockProvider';
 import styles from './index.module.scss';
 
 function GameSelect() {
   const { available, day, season, setDay, setSeason, streaming } = useContext(gameDataContext);
+  const { setTurnNumber } = useContext(clockContext);
 
   const handleSetSeason = (e: any): void => {
     setDay('');
     setSeason(e.target.value);
   };
 
-  const handleSetDay = (e: any): void => setDay(e.target.value);
+  const handleSetDay = (e: any): void => {
+    setTurnNumber(0);
+    setDay(e.target.value);
+  };
 
   return (
     <>

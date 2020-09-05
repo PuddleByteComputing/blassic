@@ -6,6 +6,7 @@ interface GameDataProviderApi {
   available: GameMetaDataType,
   day: string,
   season: string,
+  seasonSpans: { [season: string]: number[] }
   setDay: (day: string | number) => void,
   setSeason: (season: string) => void,
   streaming: string,
@@ -20,6 +21,7 @@ const initialState: GameDataProviderApi = {
   available: initialAvailableGames,
   day: '',
   season: '',
+  seasonSpans: {},
   setDay: (_day: string | number) => null,
   setSeason: (_season: string) => null,
   streaming: '',
@@ -42,15 +44,11 @@ interface Props { children: React.ReactNode }
 
 function GameDataProvider({ children }: Props) {
   const [day, setDay] = useState('');
-  const [season, setOnlySeason] = useState('');
-  const setSeason = (season: string) => {
-    setDay('');
-    setOnlySeason(season);
-  };
-
+  const [season, setSeason] = useState('');
+  const [seasonSpans, setSeasonSpans] = useState({} as { [seasonId: string]: number[] });
   const [turnCount, updateTurnCount] = useState(0);
   const turns: React.MutableRefObject<GameDataType[]> = useRef([]);
-  const streaming = useRef('');
+  const [streaming, setStreaming] = useState('');
 
   const [available, setAvailableGames] = useState(initialAvailableGames);
   const [cache, updateCache] = useState(initialGameCache);
@@ -64,16 +62,32 @@ function GameDataProvider({ children }: Props) {
     updateTurnCount(turns.current.length);
   };
 
+  const seasonSpan = (season: string, available: GameMetaDataType) => {
+    const sortedDays = Object.keys(available[season])
+      .map((day) => parseInt(day))
+      .sort((a, b) => a === b ? 0 : (a < b ? -1 : 1)); // why u no <=> es6
+    const lastIdx = sortedDays.length - 1;
+    return [sortedDays[0], sortedDays[lastIdx]].map((day) => day.toString());
+  };
+
+  const ingestAvailableGames = (available: GameMetaDataType) => {
+    const availableSeasonSpans = Object.keys(available)
+      .reduce((memo, season) => ({ ...memo, [season]: seasonSpan(season, available) }), {});
+
+    setSeasonSpans(availableSeasonSpans);
+    setAvailableGames(available);
+  };
+
   const fetchAvailableGames = () => {
     fetch('/forbidden-knowledge/index.json')
       .then(response => response.json())
-      .then(json => setAvailableGames(json))
+      .then(available => ingestAvailableGames(available))
       .catch((err) => alert(`Could not fetch available games index: ${err}`));
   };
 
   const fetchGame = (season: string, day: string) => {
     // TODO: don't squash in-progress stream, if any
-    streaming.current = `s${season}d${day}`;
+    setStreaming(`s${season}d${day}`);
     turns.current = [];
     openStream(season, day)
       .then((lineReader) => {
@@ -81,7 +95,7 @@ function GameDataProvider({ children }: Props) {
 
         lineReader.read().then(function processLine(result) {
           if (result.done) {
-            streaming.current = ''; // set ref value *before* triggering re-render via cacheGame()
+            setStreaming('');
             cacheGame();
             return;
           }
@@ -103,7 +117,7 @@ function GameDataProvider({ children }: Props) {
     if (cache.data?.[season]?.[day]) {
       turns.current = [...cache.data[season][day]];
       updateTurnCount(turns.current.length);
-    } else if (!streaming.current && season && day) {
+    } else if (!streaming && season && day) {
       fetchGame(season, day);
     }
   };
@@ -112,14 +126,20 @@ function GameDataProvider({ children }: Props) {
   useEffect(setGame, [season, day]); // get game data from cache or network when season/day change
 
   const externalSetDay = (val: string | number) => setDay(val.toString());
+  const externalSetSeason = (season: string) => {
+    setDay('');
+    setSeason(season);
+  };
+
 
   const api = {
     available,
     day,
     season,
+    seasonSpans,
     setDay: externalSetDay,
-    setSeason,
-    streaming: streaming.current,
+    setSeason: externalSetSeason,
+    streaming: streaming,
     turnCount,
     turns: turns.current
   };

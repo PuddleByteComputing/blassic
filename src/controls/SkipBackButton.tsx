@@ -11,6 +11,7 @@ function SkipBackButton() {
   const skipBack = () => {
     if (turnNumber === 0) {
       const previousDay = Math.max(0, parseInt(day || '0') - 1);
+      setTurnNumber(0);
       setDay(previousDay);
     } else {
       setTurnNumber(0);
@@ -19,7 +20,7 @@ function SkipBackButton() {
 
   return (
     <IconButton
-      disabled={!!(streaming || (day === '0'))}
+      disabled={!!(streaming || !day || (day === '0' && turnNumber < 1))}
       onClick={(event) => { event.stopPropagation(); skipBack(); }}
       onFocus={(event) => event.stopPropagation()}
       size="small"

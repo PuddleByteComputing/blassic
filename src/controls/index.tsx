@@ -8,33 +8,8 @@ import PlayPauseButton from './PlayPauseButton';
 import Speed from './Speed';
 import RewindButton from './RewindButton';
 import SkipBackButton from './SkipBackButton';
-
-import { IconButton } from '@material-ui/core';
-import { FastForward, SkipNext, SkipPrevious } from '@material-ui/icons';
-
-function FastForwardButton() {
-  return (
-    <IconButton
-      onClick={(event) => { event.stopPropagation(); }}
-      onFocus={(event) => event.stopPropagation()}
-      size="small"
-    >
-      <FastForward fontSize="small" />
-    </IconButton >
-  );
-}
-
-function SkipForwardButton() {
-  return (
-    <IconButton
-      onClick={(event) => { event.stopPropagation(); }}
-      onFocus={(event) => event.stopPropagation()}
-      size="small"
-    >
-      <SkipNext fontSize="small" />
-    </IconButton >
-  );
-}
+import FastForwardButton from './FastForwardButton';
+import SkipForwardButton from './SkipForwardButton';
 
 function Controls() {
   const { turnCount } = useContext(gameDataContext);
