@@ -6,7 +6,7 @@ import { gameDataContext } from '../GameDataProvider';
 
 function SkipBackButton() {
   const { turnNumber, setTurnNumber } = useContext(clockContext);
-  const { day, streaming, turnCount, setDay } = useContext(gameDataContext);
+  const { day, streaming, setDay } = useContext(gameDataContext);
 
   const skipBack = () => {
     if (turnNumber === 0) {
