@@ -11,11 +11,12 @@ import styles from './index.module.scss';
 
 function ScoreBoard() {
   const { turnNumber } = useContext(clockContext);
-  const { turns } = useContext(gameDataContext);
+  const { turnsRef } = useContext(gameDataContext);
   const theme = useTheme();
-  const turn = turns[turnNumber];
+  const turn = turnsRef.current[turnNumber];
   if (!turn) { return <></>; }
 
+  // @ts-ignore .palette does exist on the theme object, though
   const bgColor = theme.palette.background.default;
   const teamStandingsMap = mapTeamsToStandings(turn);
   const gameMap: { [teamId: string]: number } = turn.schedule.reduce((memo, play, idx) => ({ ...memo, [play.homeTeam]: idx }), {});

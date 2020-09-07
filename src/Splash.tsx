@@ -4,8 +4,8 @@ import { gameDataContext } from './GameDataProvider';
 import styles from './App.module.scss';
 
 function Splash() {
-  const { turns } = useContext(gameDataContext);
-  if (turns.length > 0) {
+  const { turnsRef, streaming } = useContext(gameDataContext);
+  if (streaming || turnsRef.current.length > 0) {
     return (<></>);
   }
 

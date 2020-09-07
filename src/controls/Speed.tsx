@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Grid, Slider } from '@material-ui/core';
+import { clockContext } from '../ClockProvider';
 import styles from './index.module.scss';
 
 const dsteps = 100;
@@ -16,12 +17,8 @@ const formatDawdle = (dawdleFeedback: number) => {
 
 type HandlerType = (_event: any, value: number) => void;
 
-interface Props {
-  dawdle: (dawdling: number) => void,
-  dawdling: number;
-}
-
-function Speed({ dawdling, dawdle }: Props) {
+function Speed() {
+  const { dawdling, dawdle } = useContext(clockContext);
 
   const [dawdleFeedback, setDawdleFeedback] = useState(Math.sqrt(dawdling * dsteps ** 2 / dmax));
 
@@ -30,7 +27,7 @@ function Speed({ dawdling, dawdle }: Props) {
 
   return (
     <>
-      <Grid item container xs={2} md={5} alignContent="center" justify="flex-end">
+      <Grid item container xs={2} md={4} alignContent="center" justify="flex-end">
         Dawdle:
       </Grid>
       <Grid item container xs={8} md={5} alignContent="center" justify="center" className={styles.slider}>
@@ -43,7 +40,7 @@ function Speed({ dawdling, dawdle }: Props) {
           onChangeCommitted={handleDawdleCommit}
         />
       </Grid>
-      <Grid item container xs={2} md={2} alignContent="center" justify="flex-start">
+      <Grid item container xs={2} md={2} alignContent="center" justify="flex-start" className={styles.dawdle}>
         {formatDawdle(dawdleFeedback)}s
       </Grid>
     </>

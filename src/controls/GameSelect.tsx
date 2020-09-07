@@ -18,6 +18,7 @@ function GameSelect() {
     setDay(e.target.value);
   };
 
+  // This isn't written as a proper React component because that breaks MaterialUI's select
   const dayMenuItem = (availableDay: string) => {
     const dayIndex = parseInt(availableDay);
 

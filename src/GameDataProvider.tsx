@@ -10,8 +10,7 @@ interface GameDataProviderApi {
   setDay: (day: string | number) => void,
   setSeason: (season: string) => void,
   streaming: string,
-  turnCount: number,
-  turns: GameDataType[],
+  turnsRef: React.MutableRefObject<GameDataType[]>,
 }
 
 const initialGameCache: GameCacheType = { data: {} };
@@ -25,8 +24,8 @@ const initialState: GameDataProviderApi = {
   setDay: (_day: string | number) => null,
   setSeason: (_season: string) => null,
   streaming: '',
-  turnCount: 0,
-  turns: [],
+  // @ts-ignore -- Can't createContext() inside the component, can't useRef() outside
+  turnsRef: undefined,
 };
 
 export const gameDataContext = createContext(initialState);
@@ -35,8 +34,8 @@ const { Provider } = gameDataContext;
 async function openStream(season: string, day: string) {
   return fetch(`/forbidden-knowledge/${season}/${day}.txt`)
     .then(response => response.body)
-    .then(body => createReadableStreamLineReader(body))
-    .then((lineStream) => lineStream.getReader())
+    .then(body => body && createReadableStreamLineReader(body))
+    .then((lineStream) => lineStream?.getReader())
     .catch(error => console.error(error));
 }
 
@@ -46,7 +45,6 @@ function GameDataProvider({ children }: Props) {
   const [day, setDay] = useState('');
   const [season, setSeason] = useState('');
   const [seasonSpans, setSeasonSpans] = useState({} as { [seasonId: string]: number[] });
-  const [turnCount, updateTurnCount] = useState(0);
   const turns: React.MutableRefObject<GameDataType[]> = useRef([]);
   const [streaming, setStreaming] = useState('');
 
@@ -81,7 +79,7 @@ function GameDataProvider({ children }: Props) {
     fetch('/forbidden-knowledge/index.json')
       .then(response => response.json())
       .then(available => ingestAvailableGames(available))
-      .catch((err) => alert(`Could not fetch available games index: ${err}`));
+      .catch((err) => console.error(`Could not fetch available games index: ${err}`));
   };
 
   const fetchGame = (season: string, day: string) => {
@@ -96,15 +94,10 @@ function GameDataProvider({ children }: Props) {
           if (result.done) {
             setStreaming('');
             cacheGame();
-            updateTurnCount(turns.current.length);
             return;
           }
 
           turns.current.push(JSON.parse(result.value));
-          // while streaming gameData, re-render only on first and then every 10th received line
-          if (turns.current.length % 10 === 1) {
-            updateTurnCount(turns.current.length);
-          }
 
           lineReader.read().then(processLine);
         });
@@ -116,7 +109,6 @@ function GameDataProvider({ children }: Props) {
 
     if (cache.data?.[season]?.[day]) {
       turns.current = [...cache.data[season][day]];
-      updateTurnCount(turns.current.length);
     } else if (!streaming && season && day) {
       fetchGame(season, day);
     }
@@ -140,8 +132,7 @@ function GameDataProvider({ children }: Props) {
     setDay: externalSetDay,
     setSeason: externalSetSeason,
     streaming: streaming,
-    turnCount,
-    turns: turns.current
+    turnsRef: turns
   };
 
   return <Provider value={api}>{children}</Provider>;

@@ -7,16 +7,15 @@
 
 .controls {
   @include controls-font;
-
-  //border: 1px solid $grey-600;
-  //border-radius: 4px;
-  // font-size: 1rem;
-  // margin: .4rem auto;
-  // padding: 0 1rem;
 }
 
 .slider {
-  padding: 0 1rem;
+  padding: 0 .5rem;
+}
+
+.dawdle {
+  color: $grey-400;
+  font-size: .8rem;
 }
 
 .pick {

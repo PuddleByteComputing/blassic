@@ -5,20 +5,21 @@ import { clockContext } from '../ClockProvider';
 import { gameDataContext } from '../GameDataProvider';
 
 function FastForwardButton() {
-  const { turnCount } = useContext(gameDataContext);
+  const { turnsRef } = useContext(gameDataContext);
   const { playing, setTurnNumber, turnNumber } = useContext(clockContext);
+  const maxTurnIdx = turnsRef.current.length ? turnsRef.current.length - 1 : 0;
 
   const fastForward = () => {
     if (playing) {
-      setTurnNumber(Math.min(turnCount - 1, turnNumber + 10));
+      setTurnNumber(Math.min(maxTurnIdx, turnNumber + 10));
     } else {
-      setTurnNumber(Math.min(turnCount - 1, turnNumber + 1));
+      setTurnNumber(Math.min(maxTurnIdx, turnNumber + 1));
     }
   };
 
   return (
     <IconButton
-      disabled={turnNumber + 1 >= turnCount}
+      disabled={turnNumber >= maxTurnIdx}
       onClick={(event) => { event.stopPropagation(); fastForward(); }}
       onFocus={(event) => event.stopPropagation()}
       size="small"

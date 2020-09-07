@@ -24,7 +24,7 @@ export const clockContext = createContext(initialState);
 const { Provider } = clockContext;
 
 function ClockProvider({ children }: { children: React.ReactNode }) {
-  const { streaming, turnCount } = useContext(gameDataContext);
+  const { streaming, turnsRef } = useContext(gameDataContext);
 
   const ticking: React.MutableRefObject<ReturnType<typeof setTimeout> | null> = useRef(null);
   const [turnNumber, setTurnNumber] = useState(0);
@@ -42,7 +42,7 @@ function ClockProvider({ children }: { children: React.ReactNode }) {
   };
 
   const advanceClock = () => {
-    if (turnNumber + 1 >= turnCount) {
+    if (turnNumber + 1 >= turnsRef.current.length) {
       if (streaming) {
         // game data is still loading, wait for moar buffar
         ticking.current = setTimeout(advanceClock, 10);
