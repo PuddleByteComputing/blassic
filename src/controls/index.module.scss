@@ -1,28 +1,43 @@
+@import '../colors';
+
 @mixin controls-font {
   font-family: 'Open Sans', sans-serif;
   font-size: 1rem;
+}
+
+.controls {
+  @include controls-font;
+
+  //border: 1px solid $grey-600;
+  //border-radius: 4px;
+  // font-size: 1rem;
+  // margin: .4rem auto;
+  // padding: 0 1rem;
 }
 
 .slider {
   padding: 0 1rem;
 }
 
-.gamepicker {
-  padding-right: .4rem;
-  width: 100%;
-
-  .pickseason {
-    @include controls-font;
-  }
-
-  .pickday {
-    @include controls-font;
-  }
-
+.pick {
+  @include controls-font;
 }
 
-.gamemenuitem {
+.icon {
   @include controls-font;
+  font-size: 1.7rem;
+}
 
-  font-size: .8rem;
+.gamemenuitem,
+.gamemenuhead {
+  @include controls-font;
+}
+
+.gamemenuhead {
+  font-weight: 700;
+}
+
+.playoffsubheader {
+  @include controls-font;
+  font-weight: 700;
 }

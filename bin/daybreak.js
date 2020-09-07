@@ -68,27 +68,21 @@ async function forbiddenToTemp([file, timestamp]) {
   pipeline(fileStream, unzip,
            (err) => err ? console.error(`problem with file ${file}: ${err}`) : null);
 
-  let lineCount = 0;
-
   for await (const line of rl) {
-    // NOTE - parsing every line of these files is expensive,
+    // NOTE - parsing every line of these files is expensive;
     //   the tradeoff is cleaner data in the digested gameday files.
     const turn = JSON.parse(line);
-    if(!turn.sim?.season) {
-      const keys = Object.keys(turn);
-      if (keys.length !== 1 || keys[0] !== 'clientMeta') {
-        console.error(`file: ${path}, line ${lineCount} keys: ${keys}`);
-      } else {
-        // there are records like this in the archives-- clientMeta but no data. We just skip them.
-      }
-    } else {
+
+    // There are some records in the archive that only have clientMeta, some that only have
+    //   clientMeta and sim, some that only have clientMeta, sim, and season.  We don't need or
+    //   want these for playback purposes, only records with a 'schedule' key.
+    if (turn.schedule) {
       const season = turn.sim.season.toString();
       const day = turn.sim.day.toString();
       const outStream = ensureOutstream(outStreams, season, day, timestamp.toString());
       outStream.write(line);
       outStream.write("\n");
     }
-    lineCount++;
   }
 
   endOutStreams(outStreams);

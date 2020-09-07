@@ -59,13 +59,12 @@ function GameDataProvider({ children }: Props) {
       cache.data[season][day] = [...turns.current];
     }
     updateCache(cache);
-    updateTurnCount(turns.current.length);
   };
 
   const seasonSpan = (season: string, available: GameMetaDataType) => {
     const sortedDays = Object.keys(available[season])
       .map((day) => parseInt(day))
-      .sort((a, b) => a === b ? 0 : (a < b ? -1 : 1)); // why u no <=> es6
+      .sort((a, b) => a === b ? 0 : (a < b ? -1 : 1));
     const lastIdx = sortedDays.length - 1;
     return [sortedDays[0], sortedDays[lastIdx]].map((day) => day.toString());
   };
@@ -86,7 +85,7 @@ function GameDataProvider({ children }: Props) {
   };
 
   const fetchGame = (season: string, day: string) => {
-    // TODO: don't squash in-progress stream, if any
+    // TODO: don't squash in-progress stream with new stream
     setStreaming(`s${season}d${day}`);
     turns.current = [];
     openStream(season, day)
@@ -97,6 +96,7 @@ function GameDataProvider({ children }: Props) {
           if (result.done) {
             setStreaming('');
             cacheGame();
+            updateTurnCount(turns.current.length);
             return;
           }
 

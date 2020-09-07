@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { FormControl, Grid, MenuItem, Select } from '@material-ui/core';
+import { FormControl, ListSubheader, MenuItem, Select } from '@material-ui/core';
 import { gameDataContext } from '../GameDataProvider';
 import { clockContext } from '../ClockProvider';
 import styles from './index.module.scss';
@@ -18,55 +18,85 @@ function GameSelect() {
     setDay(e.target.value);
   };
 
+  const dayMenuItem = (availableDay: string) => {
+    const dayIndex = parseInt(availableDay);
+
+    const postseason = available[season][availableDay].postseason;
+    const previousDayPostseason = dayIndex > 0 ? available[season][dayIndex - 1]?.postseason : null;
+
+    const items = [];
+
+    // fun blaseball fact: the 99th day of the season is really the -1th game of the postseason
+    if (previousDayPostseason?.game === -1) {
+      items.push(
+        <ListSubheader inset key="playoffs" className={styles.playoffsubheader}>
+          Postseason
+        </ListSubheader>
+      );
+    }
+
+    if (postseason?.game === 0) {
+      items.push(
+        <ListSubheader color="primary" key={`r${postseason.round}g${postseason.game}`} className={styles.playoffsubheader}>
+          {postseason.name}
+        </ListSubheader>
+      );
+    }
+
+    const itemText = postseason && (postseason.game >= 0)
+      ? `${postseason.round === 2 ? 'IS' : 'R' + (postseason.round + 1)} Game ${postseason.game + 1}`
+      : `Day ${dayIndex + 1}`;
+
+    items.push(
+      <MenuItem
+        className={styles.gamemenuitem}
+        key={availableDay}
+        value={availableDay}
+      >
+        {itemText}&nbsp;
+      </MenuItem>
+    );
+
+    return items;
+  };
+
   return (
     <>
-      <Grid item xs={6} md={4}>
-        <FormControl className={styles.gamepicker}>
-          <Select
-            classes={{ root: styles.pickseason }}
-            displayEmpty
-            onChange={handleSetSeason}
-            value={season}
-          >
-            <MenuItem value="" key="seasonPlaceholder" className={styles.gamemenuitem}>
-              Select Season
-              </MenuItem>
-            {Object.keys(available).map((availableSeason) =>
-              <MenuItem
-                className={styles.gamemenuitem}
-                key={availableSeason}
-                value={availableSeason}
-              >
-                Season {parseInt(availableSeason) + 1}
-              </MenuItem>
-            )}
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item xs={6} md={4}>
-        <FormControl className={styles.gamepicker}>
-          <Select
-            classes={{ root: styles.pickday }}
-            disabled={!(season && !streaming)}
-            displayEmpty
-            onChange={handleSetDay}
-            value={day}
-          >
-            <MenuItem value="" key="dayPlaceholder" className={styles.gamemenuitem}>
-              Select Day
-              </MenuItem>
-            {season && Object.keys(available[season]).map((availableDay) =>
-              <MenuItem
-                className={styles.gamemenuitem}
-                key={availableDay}
-                value={availableDay}
-              >
-                Day {parseInt(availableDay) + 1}
-              </MenuItem>
-            )}
-          </Select>
-        </FormControl>
-      </Grid>
+      <FormControl>
+        <Select
+          autoWidth
+          classes={{ root: styles.pick, icon: styles.icon }}
+          displayEmpty
+          onChange={handleSetSeason}
+          value={season}
+        >
+          <MenuItem value="" className={styles.gamemenuhead}>
+            Select Season:&nbsp;
+          </MenuItem>
+          {Object.keys(available).map((season) =>
+            <MenuItem key={season} value={season} className={styles.gamemenuitem}>
+              Season {parseInt(season) + 1}&nbsp;
+            </MenuItem>
+          )}
+        </Select>
+      </FormControl>
+      &nbsp;
+      <FormControl>
+        <Select
+          autoWidth
+          classes={{ root: styles.pick, icon: styles.icon }}
+          disabled={!(season && !streaming)}
+          displayEmpty
+          onChange={handleSetDay}
+          value={day}
+        >
+          <MenuItem value="" className={styles.gamemenuhead}>
+            Select Day:&nbsp;
+          </MenuItem>
+          {season && Object.keys(available[season])
+            .flatMap((availableDay) => dayMenuItem(availableDay))}
+        </Select>
+      </FormControl>
     </>
   );
 }

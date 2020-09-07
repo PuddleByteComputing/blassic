@@ -14,6 +14,7 @@ export interface GameMetaDataType {
     [day: string]: {
       turns: number,
       completed: boolean,
+      postseason?: { game: number, name: string, round: number },
       started: boolean,
     }
   }

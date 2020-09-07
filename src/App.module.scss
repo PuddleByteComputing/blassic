@@ -1,10 +1,5 @@
 @import './colors';
 
-@mixin controls-font {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 1rem;
-}
-
 .gridwrap {
   // without this we'll have a horizontal scrollbar
   padding: 4px 8px;
@@ -33,13 +28,4 @@
   font-size: 1rem;
   font-style: italic;
   font-weight: 400;
-}
-
-.controls {
-  @include controls-font;
-
-  border: 1px solid $grey-600;
-  border-radius: 4px;
-  margin: .4rem auto;
-  padding: 0 1rem;
 }

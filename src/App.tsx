@@ -1,5 +1,4 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
 
 import GameDataProvider from './GameDataProvider';
 import ClockProvider from './ClockProvider';
@@ -14,9 +13,7 @@ function App() {
     <GameDataProvider>
       <ClockProvider>
         <div className={styles.gridwrap}>
-          <Grid container className={styles.controls}>
-            <Controls />
-          </Grid >
+          <Controls />
           <Splash />
           <ScoreBoard />
         </div>
