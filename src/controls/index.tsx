@@ -8,6 +8,7 @@ import FastForwardButton from './FastForwardButton';
 import SkipForwardButton from './SkipForwardButton';
 import RewindButton from './RewindButton';
 import SkipBackButton from './SkipBackButton';
+import Counter from './Counter';
 
 import styles from './index.module.scss';
 
@@ -26,7 +27,9 @@ function Controls() {
           <FastForwardButton />
           <SkipForwardButton />
         </Grid>
-        <Grid item container xs={2} />
+        <Grid item container xs={2} alignContent="center" justify="flex-start">
+          <Counter />
+        </Grid>
       </Grid>
       <Grid item container xs={12} md={4} alignContent="center" justify="flex-end">
         <Speed />

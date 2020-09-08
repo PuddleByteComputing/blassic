@@ -19,7 +19,8 @@ function ScoreBoard() {
   // @ts-ignore .palette does exist on the theme object, though
   const bgColor = theme.palette.background.default;
   const teamStandingsMap = mapTeamsToStandings(turn);
-  const gameMap: { [teamId: string]: number } = turn.schedule.reduce((memo, play, idx) => ({ ...memo, [play.homeTeam]: idx }), {});
+  const gameMap: { [teamId: string]: number } =
+    turn.schedule.reduce((memo, play, idx) => ({ ...memo, [play.homeTeam]: idx }), {});
   const sorter = playComparator(turn);
   const sortedPlays = Object.keys(gameMap || {})
     .map((teamId) => turn.schedule[gameMap[teamId]])

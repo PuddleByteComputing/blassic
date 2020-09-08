@@ -40,3 +40,9 @@
   @include controls-font;
   font-weight: 700;
 }
+
+.counter {
+  @include controls-font;
+  font-size: .8rem;
+  color: $grey-400;
+}

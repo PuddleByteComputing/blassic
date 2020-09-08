@@ -29,7 +29,7 @@ function ClockProvider({ children }: { children: React.ReactNode }) {
   const ticking: React.MutableRefObject<ReturnType<typeof setTimeout> | null> = useRef(null);
   const [turnNumber, setTurnNumber] = useState(0);
   const [playing, playBall] = useState(false);
-  const dawdling = useRef(1000); // ms between pitches
+  const [dawdling, dawdle] = useState(500); // ms between pitches
 
   const stopTicking: () => ReturnType<typeof setTimeout> | null = () => {
     if (ticking.current) {
@@ -58,7 +58,7 @@ function ClockProvider({ children }: { children: React.ReactNode }) {
 
   const tick = () => {
     if (playing) {
-      ticking.current = setTimeout(advanceClock, dawdling.current);
+      ticking.current = setTimeout(advanceClock, dawdling);
     } else if (ticking.current !== null) { // !playing
       // cancel any outstanding tick when playing is set to false
       stopTicking();
@@ -72,15 +72,15 @@ function ClockProvider({ children }: { children: React.ReactNode }) {
     setTurnNumber(val);
   }
 
-  function dawdle(val: number) {
+  function externalDawdle(val: number) {
     const wasTicking = stopTicking();
-    dawdling.current = val;
+    dawdle(val);
     if (wasTicking) { tick(); }
   }
 
   const api = {
-    dawdle,
-    dawdling: dawdling.current,
+    dawdle: externalDawdle,
+    dawdling: dawdling,
     playing,
     playBall,
     turnNumber,
