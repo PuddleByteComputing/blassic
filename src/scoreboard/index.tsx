@@ -12,7 +12,7 @@ import styles from './index.module.scss';
 
 function ScoreBoard() {
   const { turnNumber } = useContext(clockContext);
-  const { day, season, turnsRef } = useContext(gameDataContext);
+  const { season, turnsRef } = useContext(gameDataContext);
   const theme = useTheme();
   const turn = turnsRef.current[turnNumber];
   const initialStandingsMap = {} as StandingsMapType;

@@ -1,0 +1,48 @@
+.root {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+}
+
+.awayline {
+  .starttrypt,
+  .midtrypt,
+  .endtrypt {
+    padding: 2px;
+  }
+
+  .starttrypt {
+    border-bottom: 2px solid;
+    border-left: 1px solid;
+  }
+
+  .midtrypt {
+    border-bottom: 2px solid;
+  }
+
+  .endtrypt {
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+  }
+}
+
+.homeline {
+  .starttrypt,
+  .midtrypt,
+  .endtrypt {
+    padding: 2px;
+  }
+
+  .starttrypt {
+    border-left: 1px solid;
+    border-top: 1px solid;
+  }
+
+  .midtrypt {
+    border-top: 1px solid;
+  }
+
+  .endtrypt {
+    border-right: 2px solid;
+    border-top: 1px solid;
+  }
+}

@@ -4,6 +4,7 @@ import { Grid } from '@material-ui/core';
 import Bases from './Bases';
 import BallStrikeOut from './BallStrikeOut';
 import InningIndicator from './InningIndicator';
+import BoxScore from './BoxScore';
 import { isAbomination } from '../../lib/play-utils';
 import { GamePlayType, StandingsMapType } from '../../types';
 import styles from './index.module.scss';
@@ -88,8 +89,13 @@ function Game({ play, standings }: Props) {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item container alignContent="center" justify="flex-end" className={styles.lastupdate}>
-        {play.lastUpdate}
+      <Grid item container>
+        <Grid item container xs={12} md={7} alignContent="center" justify="flex-end" className={styles.lastupdate}>
+          {play.lastUpdate}
+        </Grid>
+        <Grid item container xs={12} md={5}>
+          <BoxScore />
+        </Grid>
       </Grid>
     </Grid>
   );
