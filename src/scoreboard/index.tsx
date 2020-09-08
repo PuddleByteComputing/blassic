@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Hidden } from '@material-ui/core';
 import { useTheme } from '@material-ui/styles';
 import { gameDataContext } from '../GameDataProvider';
@@ -7,21 +7,33 @@ import Game from './game';
 import { league, subleagues, teamSubleagueId } from '../lib/leagues';
 import { mapTeamsToStandings, playComparator } from '../lib/gamedata-utils';
 import { isAbomination } from '../lib/play-utils';
+import { StandingsMapType } from '../types';
 import styles from './index.module.scss';
 
 function ScoreBoard() {
   const { turnNumber } = useContext(clockContext);
-  const { season, turnsRef } = useContext(gameDataContext);
+  const { day, season, turnsRef } = useContext(gameDataContext);
   const theme = useTheme();
   const turn = turnsRef.current[turnNumber];
+  const initialStandingsMap = {} as StandingsMapType;
+  const [standingsMap, updateStandings] = useState(initialStandingsMap);
+  const remapStandings = () => {
+    console.log('updating standings map');
+    updateStandings(
+      turnsRef.current[0]
+        ? mapTeamsToStandings(turnsRef.current[0])
+        : initialStandingsMap
+    );
+  };
+  useEffect(remapStandings, [turnsRef.current[0]]);
+
   if (!turn) { return <></>; }
 
   // @ts-ignore .palette does exist on the theme object, though
   const bgColor = theme.palette.background.default;
-  const teamStandingsMap = mapTeamsToStandings(turn);
   const gameMap: { [teamId: string]: number } =
     turn.schedule.reduce((memo, play, idx) => ({ ...memo, [play.homeTeam]: idx }), {});
-  const sorter = playComparator(turn);
+  const sorter = playComparator(turn, standingsMap);
   const sortedPlays = Object.keys(gameMap || {})
     .map((teamId) => turn.schedule[gameMap[teamId]])
     .sort(sorter);
@@ -68,9 +80,7 @@ function ScoreBoard() {
         <Grid container item xs={12} sm={6} lg={5} direction="column">
           {leftGames.map((play) => (
             <Grid item container key={play.homeTeam}>
-              <Game play={play}
-                awayTeamStandings={teamStandingsMap[play.awayTeam]}
-                homeTeamStandings={teamStandingsMap[play.homeTeam]} />
+              <Game play={play} standings={standingsMap} />
             </Grid>
           ))}
         </Grid>
@@ -80,9 +90,7 @@ function ScoreBoard() {
         <Grid container item xs={12} sm={6} lg={5} direction="column">
           {rightGames.map((play) => (
             <Grid item container key={play.homeTeam}>
-              <Game play={play}
-                awayTeamStandings={teamStandingsMap[play.awayTeam]}
-                homeTeamStandings={teamStandingsMap[play.homeTeam]} />
+              <Game play={play} standings={standingsMap} />
             </Grid>
           ))}
           {turn.schedule.some((play) => isAbomination(play)) ? (

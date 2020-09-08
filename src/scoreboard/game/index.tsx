@@ -5,7 +5,7 @@ import Bases from './Bases';
 import BallStrikeOut from './BallStrikeOut';
 import InningIndicator from './InningIndicator';
 import { isAbomination } from '../../lib/play-utils';
-import { GamePlayType, TeamStandingsType } from '../../types';
+import { GamePlayType, StandingsMapType } from '../../types';
 import styles from './index.module.scss';
 
 function strikesForOut({ awayStrikes, homeStrikes, topOfInning }: GamePlayType) {
@@ -13,12 +13,11 @@ function strikesForOut({ awayStrikes, homeStrikes, topOfInning }: GamePlayType) 
 }
 
 interface Props {
-  awayTeamStandings: TeamStandingsType,
-  homeTeamStandings: TeamStandingsType,
   play: GamePlayType,
+  standings: StandingsMapType,
 }
 
-function Game({ awayTeamStandings, homeTeamStandings, play }: Props) {
+function Game({ play, standings }: Props) {
   return (
     <Grid item container direction="column" className={styles.scorecard}>
       <Grid item container>
@@ -39,7 +38,7 @@ function Game({ awayTeamStandings, homeTeamStandings, play }: Props) {
               </Grid>
               <Grid item xs={2} container direction="column">
                 <Grid item className={styles.teamrecord}>
-                  {awayTeamStandings.w}-{awayTeamStandings.l}
+                  {standings[play.awayTeam]?.w}-{standings[play.awayTeam]?.l}
                 </Grid>
                 <Grid item className={play.awayOdds >= 0.5 ? styles.goododds : styles.badodds}>
                   {Math.round(play.awayOdds * 100)}%
@@ -63,7 +62,7 @@ function Game({ awayTeamStandings, homeTeamStandings, play }: Props) {
                   {Math.round(play.homeOdds * 100)}%
                 </Grid>
                 <Grid item className={styles.teamrecord}>
-                  {homeTeamStandings.w}-{homeTeamStandings.l}
+                  {standings[play.homeTeam]?.w}-{standings[play.homeTeam]?.l}
                 </Grid>
               </Grid>
               <Grid item container xs={8} alignContent="center">

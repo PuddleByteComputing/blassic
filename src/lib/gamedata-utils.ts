@@ -23,13 +23,14 @@ function homeTeamCompare(a: GamePlayType, b: GamePlayType, standingsMap: Standin
     return (bIsAbomination ? -1 : 1);
   }
 
-  if (standingsMap[a.homeTeam].avg !== standingsMap[b.homeTeam].avg) {
-    return (standingsMap[a.homeTeam].avg > standingsMap[b.homeTeam].avg ? -1 : 1);
+  if (standingsMap[a.homeTeam]?.avg !== standingsMap[b.homeTeam]?.avg) {
+    return (standingsMap[a.homeTeam]?.avg > standingsMap[b.homeTeam]?.avg ? -1 : 1);
   }
 
   return (a.homeTeamName > b.homeTeamName ? 1 : -1);
 }
 
-export function playComparator(gameData: GameDataType) {
-  return (a: GamePlayType, b: GamePlayType) => homeTeamCompare(a, b, mapTeamsToStandings(gameData));
+export function playComparator(gameData: GameDataType, standingsMap?: StandingsMapType) {
+  return (a: GamePlayType, b: GamePlayType) =>
+    homeTeamCompare(a, b, standingsMap || mapTeamsToStandings(gameData));
 }

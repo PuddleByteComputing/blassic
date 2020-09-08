@@ -98,6 +98,8 @@ function GameDataProvider({ children }: Props) {
           }
 
           turns.current.push(JSON.parse(result.value));
+          // use setDay() to force update when we've received and parsed the first line of the stream
+          // if (turns.current.length === 1) { setDay(day.toString()); }
 
           lineReader.read().then(processLine);
         });
