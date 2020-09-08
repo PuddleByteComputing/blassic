@@ -1,5 +1,5 @@
 import { GamePlayType } from '../types';
-import { teamIsEvil, teamIsGood } from './leagues';
+import { teamSubleagueId } from './leagues';
 
 export const isAbomination = (play: GamePlayType) =>
-  teamIsEvil(play.awayTeam) === teamIsGood(play.homeTeam);
+  teamSubleagueId(play.awayTeam, play.season) !== teamSubleagueId(play.homeTeam, play.season);

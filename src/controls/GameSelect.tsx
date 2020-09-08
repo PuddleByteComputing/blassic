@@ -95,7 +95,8 @@ function GameSelect() {
             Select Day:&nbsp;
           </MenuItem>
           {season && Object.keys(available[season])
-            .flatMap((availableDay) => dayMenuItem(availableDay))}
+            .filter((day) => available[season][day].complete)
+            .flatMap((day) => dayMenuItem(day))}
         </Select>
       </FormControl>
     </>

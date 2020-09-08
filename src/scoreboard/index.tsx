@@ -4,14 +4,14 @@ import { useTheme } from '@material-ui/styles';
 import { gameDataContext } from '../GameDataProvider';
 import { clockContext } from '../ClockProvider';
 import Game from './game';
-import { teamIsGood, teamIsEvil } from '../lib/leagues';
+import { league, subleagues, teamSubleagueId } from '../lib/leagues';
 import { mapTeamsToStandings, playComparator } from '../lib/gamedata-utils';
 import { isAbomination } from '../lib/play-utils';
 import styles from './index.module.scss';
 
 function ScoreBoard() {
   const { turnNumber } = useContext(clockContext);
-  const { turnsRef } = useContext(gameDataContext);
+  const { season, turnsRef } = useContext(gameDataContext);
   const theme = useTheme();
   const turn = turnsRef.current[turnNumber];
   if (!turn) { return <></>; }
@@ -26,8 +26,12 @@ function ScoreBoard() {
     .map((teamId) => turn.schedule[gameMap[teamId]])
     .sort(sorter);
 
-  const goodGames = sortedPlays.filter((play) => teamIsGood(play.homeTeam));
-  const evilGames = sortedPlays.filter((play) => teamIsEvil(play.homeTeam));
+  const leftSubLeagueId = league(season).subleagues[0];
+  const rightSubLeagueId = league(season).subleagues[1];
+  const leftGames = sortedPlays.filter((play) =>
+    teamSubleagueId(play.homeTeam, season) === leftSubLeagueId);
+  const rightGames = sortedPlays.filter((play) =>
+    teamSubleagueId(play.homeTeam, season) === rightSubLeagueId);
 
   return (
     <>
@@ -42,13 +46,13 @@ function ScoreBoard() {
             </Grid>
           </Hidden>
           <Grid item container sm={6} md={3} lg={2} alignContent="center" justify="flex-end" className={styles.good}>
-            GOOD
+            {subleagues[leftSubLeagueId].shortName}
           </Grid>
           <Hidden mdDown>
             <Grid item container lg={2} className={styles.green} />
           </Hidden>
           <Grid item container sm={6} md={3} lg={2} alignContent="center" justify="flex-start" className={styles.evil}>
-            EVIL
+            {subleagues[rightSubLeagueId].shortName}
           </Grid>
           <Hidden smDown>
             <Grid item container md={3} direction="column">
@@ -62,7 +66,7 @@ function ScoreBoard() {
       </Hidden>
       <Grid container className={styles.scoreboard}>
         <Grid container item xs={12} sm={6} lg={5} direction="column">
-          {goodGames.map((play) => (
+          {leftGames.map((play) => (
             <Grid item container key={play.homeTeam}>
               <Game play={play}
                 awayTeamStandings={teamStandingsMap[play.awayTeam]}
@@ -74,7 +78,7 @@ function ScoreBoard() {
           <Grid item container lg={2} />
         </Hidden>
         <Grid container item xs={12} sm={6} lg={5} direction="column">
-          {evilGames.map((play) => (
+          {rightGames.map((play) => (
             <Grid item container key={play.homeTeam}>
               <Game play={play}
                 awayTeamStandings={teamStandingsMap[play.awayTeam]}

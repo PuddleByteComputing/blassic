@@ -4,7 +4,7 @@ export type ColorStringType = string;
 export type EmojiType = string;
 
 export interface LeagueType {
-  _id: UUID,
+  id: UUID,
   name: string,
   tiebreakers: UUID,
   subleagues: UUID[]
@@ -17,7 +17,7 @@ export interface SubLeagueType {
 };
 
 export interface DivisionType {
-  _id: UUID,
+  id: UUID,
   name: string,
   teams: UUID[]
 };
