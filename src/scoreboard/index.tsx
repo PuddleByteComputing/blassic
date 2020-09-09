@@ -14,7 +14,6 @@ function ScoreBoard() {
   const { turnNumber } = useContext(clockContext);
   const { season, turnsRef } = useContext(gameDataContext);
   const theme = useTheme();
-  console.log(theme);
   const turn = turnsRef.current[turnNumber];
   const initialStandingsMap = {} as StandingsMapType;
   const [standingsMap, updateStandings] = useState(initialStandingsMap);
