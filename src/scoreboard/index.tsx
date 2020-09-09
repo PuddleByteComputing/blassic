@@ -17,14 +17,8 @@ function ScoreBoard() {
   const turn = turnsRef.current[turnNumber];
   const initialStandingsMap = {} as StandingsMapType;
   const [standingsMap, updateStandings] = useState(initialStandingsMap);
-  const remapStandings = () => {
-    console.log('updating standings map');
-    updateStandings(
-      turnsRef.current[0]
-        ? mapTeamsToStandings(turnsRef.current[0])
-        : initialStandingsMap
-    );
-  };
+  const remapStandings = () =>
+    updateStandings(turnsRef.current[0] ? mapTeamsToStandings(turnsRef.current[0]) : initialStandingsMap);
   useEffect(remapStandings, [turnsRef.current[0]]);
 
   if (!turn) { return <></>; }

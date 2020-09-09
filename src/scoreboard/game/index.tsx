@@ -94,7 +94,7 @@ function Game({ play, standings }: Props) {
           {play.lastUpdate}
         </Grid>
         <Grid item container xs={12} md={5}>
-          <BoxScore />
+          <BoxScore play={play} />
         </Grid>
       </Grid>
     </Grid>

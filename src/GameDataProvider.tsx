@@ -1,10 +1,14 @@
 import React, { createContext, useEffect, useRef, useState } from 'react';
-import { GameDataType, GameMetaDataType, GameCacheType } from './types';
+import { GameDataType, GameMetaDataType, GameCacheType, GamePlayType } from './types';
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
+
+type InningStatType = { turnNumber: number, score: number } | null;
+export type InningStatsType = { [teamId: string]: InningStatType[][] };
 
 interface GameDataProviderApi {
   available: GameMetaDataType,
   day: string,
+  inningStats: InningStatsType,
   season: string,
   seasonSpans: { [season: string]: number[] }
   setDay: (day: string | number) => void,
@@ -16,9 +20,13 @@ interface GameDataProviderApi {
 const initialGameCache: GameCacheType = { data: {} };
 const initialAvailableGames: GameMetaDataType = {};
 
+const initialInningStats = {} as { [teamId: string]: InningStatType[][] };
+
 const initialState: GameDataProviderApi = {
   available: initialAvailableGames,
   day: '',
+  // @ts-ignore -- See turnsRef below
+  inningStats: initialInningStats,
   season: '',
   seasonSpans: {},
   setDay: (_day: string | number) => null,
@@ -45,6 +53,7 @@ function GameDataProvider({ children }: Props) {
   const [day, setDay] = useState('');
   const [season, setSeason] = useState('');
   const [seasonSpans, setSeasonSpans] = useState({} as { [seasonId: string]: number[] });
+  const [inningStats, setInningStats] = useState(initialInningStats);
   const turns: React.MutableRefObject<GameDataType[]> = useRef([]);
   const [streaming, setStreaming] = useState('');
 
@@ -65,6 +74,45 @@ function GameDataProvider({ children }: Props) {
       .sort((a, b) => a === b ? 0 : (a < b ? -1 : 1));
     const lastIdx = sortedDays.length - 1;
     return [sortedDays[0], sortedDays[lastIdx]].map((day) => day.toString());
+  };
+
+  const updateInningStats = () => {
+    if (turns.current.length > 1) {
+      const thisTurn = turns.current[turns.current.length - 1];
+      const lastTurnIdx = turns.current.length - 2;
+      const lastTurn = turns.current[lastTurnIdx];
+
+      // performance: avoid doing Array.find() 10 times per line received
+      type LastTurnMapType = { [id: string]: GamePlayType };
+      const lastTurnMap = lastTurn.schedule
+        .reduce((memo, play) => ({ ...memo, [play.homeTeam]: play }), {} as LastTurnMapType);
+
+      thisTurn.schedule.forEach((play) => {
+        const prevPlay = lastTurnMap[play.homeTeam];
+        const newInning = prevPlay.gameStart && (play.topOfInning !== prevPlay.topOfInning);
+        const endOfGame = play.gameComplete && !prevPlay.gameComplete;
+        let commitInningStats = false;
+        if (newInning || endOfGame) {
+          if (!inningStats[play.homeTeam]) {
+            inningStats[play.homeTeam] = [];
+          }
+
+          if (!inningStats[play.homeTeam][prevPlay.inning]) {
+            inningStats[play.homeTeam][prevPlay.inning] = [null, null];
+          }
+
+          const stats = {
+            turnNumber: lastTurnIdx,
+            score: prevPlay.topOfInning ? prevPlay.awayScore : prevPlay.homeScore
+          };
+          inningStats[play.homeTeam][prevPlay.inning][prevPlay.topOfInning ? 0 : 1] = stats;
+        }
+
+        if (commitInningStats) {
+          setInningStats(inningStats);
+        }
+      });
+    }
   };
 
   const ingestAvailableGames = (available: GameMetaDataType) => {
@@ -93,13 +141,13 @@ function GameDataProvider({ children }: Props) {
         lineReader.read().then(function processLine(result) {
           if (result.done) {
             setStreaming('');
+            updateInningStats();
             cacheGame();
             return;
           }
 
           turns.current.push(JSON.parse(result.value));
-          // use setDay() to force update when we've received and parsed the first line of the stream
-          // if (turns.current.length === 1) { setDay(day.toString()); }
+          updateInningStats();
 
           lineReader.read().then(processLine);
         });
@@ -125,10 +173,10 @@ function GameDataProvider({ children }: Props) {
     setSeason(season);
   };
 
-
   const api = {
     available,
     day,
+    inningStats,
     season,
     seasonSpans,
     setDay: externalSetDay,
