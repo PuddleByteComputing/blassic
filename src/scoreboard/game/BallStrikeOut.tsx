@@ -18,43 +18,22 @@ function Pips({ count, max }: PipsProps) {
 }
 
 interface Props {
-  balls: number,
-  strikes: number,
-  strikesForOut: number,
-  outs: number,
+  count: number,
+  label: string,
+  max: number,
 }
 
-function BallStrikeOut({ balls, outs, strikes, strikesForOut }: Props) {
+function BallStrikeOut({ count, label, max }: Props) {
   return (
-    <>
-      <Grid item container>
-        <Grid container item xs={4} alignContent="center" justify="flex-start" className={styles.label}>
-          Ball
-        </Grid>
-        <Grid item xs={2} />
-        <Grid container item xs={6} alignContent="center" justify="flex-end" className={styles.pips}>
-          <Pips count={balls} max={4} />
-        </Grid>
+    <Grid item container>
+      <Grid container item xs={4} alignContent="center" justify="flex-start" className={styles.label}>
+        {label}
       </Grid>
-      <Grid item container>
-        <Grid container item xs={4} alignContent="center" justify="flex-start" className={styles.label}>
-          Strike
-        </Grid>
-        <Grid item xs={2} />
-        <Grid container item xs={6} alignContent="center" justify="flex-end" className={styles.pips}>
-          <Pips count={strikes} max={strikesForOut} />
-        </Grid>
+      <Grid item xs={2} />
+      <Grid container item xs={6} alignContent="center" justify="flex-end" className={styles.pips}>
+        <Pips count={count} max={max} />
       </Grid>
-      <Grid item container>
-        <Grid container item xs={4} alignContent="center" justify="flex-start" className={styles.label}>
-          Out
-        </Grid>
-        <Grid item xs={2} />
-        <Grid container item xs={6} alignContent="center" justify="flex-end" className={styles.pips}>
-          <Pips count={outs} max={3} />
-        </Grid>
-      </Grid>
-    </>
+    </Grid>
   );
 }
 

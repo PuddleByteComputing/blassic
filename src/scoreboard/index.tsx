@@ -14,6 +14,7 @@ function ScoreBoard() {
   const { turnNumber } = useContext(clockContext);
   const { season, turnsRef } = useContext(gameDataContext);
   const theme = useTheme();
+  console.log(theme);
   const turn = turnsRef.current[turnNumber];
   const initialStandingsMap = {} as StandingsMapType;
   const [standingsMap, updateStandings] = useState(initialStandingsMap);
@@ -45,53 +46,47 @@ function ScoreBoard() {
         <Grid container justify="center" className={styles.header}>
           <Hidden smDown>
             <Grid item container md={3} direction="column">
-              <Grid item container className={styles.goodspace}>
-                <div className={styles.goodmask} style={{ backgroundColor: bgColor }}></div>
+              <Grid item container className={styles.leftspace}>
+                <div className={styles.leftmask} style={{ backgroundColor: bgColor }}></div>
               </Grid>
-              <Grid item className={styles.goodshoulder}>&nbsp;</Grid>
+              <Grid item className={styles.leftshoulder}>&nbsp;</Grid>
             </Grid>
           </Hidden>
-          <Grid item container sm={6} md={3} lg={2} alignContent="center" justify="flex-end" className={styles.good}>
+          <Grid item container sm={6} md={3} alignContent="center" justify="flex-end" className={styles.left}>
             {subleagues[leftSubLeagueId].shortName}
           </Grid>
-          <Hidden mdDown>
-            <Grid item container lg={2} className={styles.green} />
-          </Hidden>
-          <Grid item container sm={6} md={3} lg={2} alignContent="center" justify="flex-start" className={styles.evil}>
+          <Grid item container sm={6} md={3} alignContent="center" justify="flex-start" className={styles.right}>
             {subleagues[rightSubLeagueId].shortName}
           </Grid>
           <Hidden smDown>
             <Grid item container md={3} direction="column">
-              <Grid item container className={styles.evilspace}>
-                <div className={styles.evilmask} style={{ backgroundColor: bgColor }}></div>
+              <Grid item container className={styles.rightspace}>
+                <div className={styles.rightmask} style={{ backgroundColor: bgColor }}></div>
               </Grid>
-              <Grid item className={styles.evilshoulder}>&nbsp;</Grid>
+              <Grid item className={styles.rightshoulder}>&nbsp;</Grid>
             </Grid>
           </Hidden>
         </Grid>
       </Hidden>
       <Grid container className={styles.scoreboard}>
-        <Grid container item xs={12} sm={6} lg={5} direction="column">
+        <Grid container item xs={12} sm={6} direction="column" className={styles.leftgames}>
           {leftGames.map((play) => (
             <Grid item container key={play.homeTeam}>
               <Game play={play} standings={standingsMap} />
             </Grid>
           ))}
         </Grid>
-        <Hidden mdDown>
-          <Grid item container lg={2} />
-        </Hidden>
-        <Grid container item xs={12} sm={6} lg={5} direction="column">
+        <Grid container item xs={12} sm={6} direction="column" className={styles.rightgames}>
           {rightGames.map((play) => (
             <Grid item container key={play.homeTeam}>
               <Game play={play} standings={standingsMap} />
             </Grid>
           ))}
-          {turn.schedule.some((play) => isAbomination(play)) ? (
-            <Grid item container alignContent="center" justify="flex-end" className={styles.footnote}>
-              * abomination
-            </Grid>)
-            : null}
+        </Grid>
+        <Grid item container xs={12} alignContent="center" justify="center" className={styles.footnote}>
+          {turn.schedule.some((play) => isAbomination(play))
+            ? <span>* abomination</span>
+            : <span>&nbsp;</span>}
         </Grid>
       </Grid>
     </>

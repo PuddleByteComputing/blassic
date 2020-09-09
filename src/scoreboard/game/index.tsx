@@ -5,6 +5,9 @@ import Bases from './Bases';
 import BallStrikeOut from './BallStrikeOut';
 import InningIndicator from './InningIndicator';
 import BoxScore from './BoxScore';
+import TeamScore from './TeamScore';
+import PitcherBatter from './PitcherBatter';
+import PlayByPlay from './PlayByPlay';
 import { isAbomination } from '../../lib/play-utils';
 import { GamePlayType, StandingsMapType } from '../../types';
 import styles from './index.module.scss';
@@ -21,83 +24,46 @@ interface Props {
 function Game({ play, standings }: Props) {
   return (
     <Grid item container direction="column" className={styles.scorecard}>
+      <Grid item container className={styles.inning}>
+        <Grid item container xs={6} alignContent="center">
+          <InningIndicator play={play} />
+        </Grid>
+        <Grid item xs={5} />
+        <Grid item container xs={1} alignContent="center" justify="flex-end">
+          <span className={styles.abomination}>{isAbomination(play) ? '*' : null}</span>
+        </Grid>
+      </Grid>
       <Grid item container>
         <Grid item container direction="column" xs={12} md={7} className={styles.teams}>
-          <Grid item container alignContent="center" className={styles.inning}>
-            <Grid item container xs={6} alignContent="center">
-              <InningIndicator play={play} />
-            </Grid>
-            <Grid item xs={5} />
-            <Grid item container xs={1} alignContent="center" justify="flex-end">
-              {isAbomination(play) ? '*' : null}
-            </Grid>
-          </Grid>
-          <Grid item container className={styles.away} style={{ borderColor: play.awayTeamColor }}>
-            <Grid item container xs={11} alignContent="center" justify="flex-start">
-              <Grid item xs={2} className={styles.awayteamlogo} style={{ backgroundColor: play.awayTeamColor }}>
-                {String.fromCodePoint(parseInt(play.awayTeamEmoji))}
-              </Grid>
-              <Grid item xs={2} container direction="column">
-                <Grid item className={styles.teamrecord}>
-                  {standings[play.awayTeam]?.w}-{standings[play.awayTeam]?.l}
+          <TeamScore play={play} standings={standings} />
+          <TeamScore home play={play} standings={standings} />
+          {play.gameComplete ? null :
+            <>
+              <PitcherBatter play={play} />
+              <Grid item container className={styles.visualization}>
+                <Grid item container xs={4} md={6} alignContent="center" justify="center">
+                  <Bases baseRunners={play.baseRunners} basesOccupied={play.basesOccupied} />
                 </Grid>
-                <Grid item className={play.awayOdds >= 0.5 ? styles.goododds : styles.badodds}>
-                  {Math.round(play.awayOdds * 100)}%
+                <Grid item container xs={8} md={6} direction="column">
+                  <BallStrikeOut label="Balls" count={play.atBatBalls} max={4} />
+                  <BallStrikeOut label="Strikes" count={play.atBatStrikes} max={strikesForOut(play)} />
+                  <BallStrikeOut label="Outs" count={play.halfInningOuts} max={3} />
                 </Grid>
               </Grid>
-              <Grid item container xs={8} alignContent="center">
-                {play.awayTeamNickname}
-              </Grid>
-            </Grid>
-            <Grid item xs={1} container className={styles.score} alignContent="center" justify="flex-end">
-              {play.awayScore}
-            </Grid>
-          </Grid>
-          <Grid item container className={styles.home} style={{ borderColor: play.homeTeamColor }}>
-            <Grid item container xs={11} alignContent="center" justify="flex-start">
-              <Grid item xs={2} className={styles.hometeamlogo} style={{ backgroundColor: play.homeTeamColor }}>
-                {String.fromCodePoint(parseInt(play.homeTeamEmoji))}
-              </Grid>
-              <Grid item xs={2} container direction="column">
-                <Grid item className={play.homeOdds >= 0.5 ? styles.goododds : styles.badodds}>
-                  {Math.round(play.homeOdds * 100)}%
-                </Grid>
-                <Grid item className={styles.teamrecord}>
-                  {standings[play.homeTeam]?.w}-{standings[play.homeTeam]?.l}
-                </Grid>
-              </Grid>
-              <Grid item container xs={8} alignContent="center">
-                {play.homeTeamNickname}
-              </Grid>
-            </Grid>
-            <Grid item xs={1} container className={styles.score} alignContent="center" justify="flex-end">
-              {play.homeScore}
-            </Grid>
-          </Grid>
+            </>}
         </Grid>
-        <Grid item container xs={12} md={5} alignContent="center" justify="center" className={styles.atbat}>
-          <Grid item container xs={4} md={6} alignContent="center" justify="center">
-            <Bases baseRunners={play.baseRunners} basesOccupied={play.basesOccupied} />
+        <Grid item container xs={12} md={5} direction="column">
+          <Grid item container>
+            <BoxScore play={play} />
           </Grid>
-          <Grid item container xs={8} md={6} direction="column">
-            <BallStrikeOut
-              balls={play.atBatBalls}
-              outs={play.halfInningOuts}
-              strikes={play.atBatStrikes}
-              strikesForOut={strikesForOut(play)}
-            />
-          </Grid>
+          {play.gameComplete ? null :
+            <Grid item container alignContent="center" justify="flex-start" className={styles.lastupdate}>
+              <PlayByPlay teamId={play.homeTeam} />
+            </Grid>
+          }
         </Grid>
       </Grid>
-      <Grid item container>
-        <Grid item container xs={12} md={7} alignContent="center" justify="flex-end" className={styles.lastupdate}>
-          {play.lastUpdate}
-        </Grid>
-        <Grid item container xs={12} md={5}>
-          <BoxScore play={play} />
-        </Grid>
-      </Grid>
-    </Grid>
+    </Grid >
   );
 }
 

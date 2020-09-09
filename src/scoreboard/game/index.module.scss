@@ -1,91 +1,97 @@
 @import '../../colors';
 
-@mixin teamlogo {
-  height: 100%;
-  padding: 0 .4rem;
-}
+@mixin webkit-scrollbar {
+  &::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+  }
 
-@mixin odds {
-  font-family: 'Open Sans', sans-serif;
-  font-size: .8rem;
-  font-style: italic;
-  padding-left: .2rem;
+  &::-webkit-scrollbar-button {
+    background: $grey-50;
+    height: 0;
+    width: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $grey-400;
+    border: 0;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: $grey-50;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background: $grey-50;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $wiggly-green;
+    border: 0;
+    border-radius: 50px;
+  }
+
+  &::-webkit-scrollbar-track:hover {
+    background: $grey-600;
+  }
+
+  &::-webkit-scrollbar-track:active {
+    background: $grey-600;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 }
 
 .scorecard {
-  min-width: 30vw;
   padding: .4rem;
+
+  .inning {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    font-variant: normal;
+    line-height: 1.4rem;
+  }
 
   .teams {
     border-left: 8px;
     font-family: 'Lora', serif;
     font-size: 1.6rem;
     font-variant: small-caps;
+    margin-bottom: .4rem;
 
-    .inning {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 1rem;
-      font-variant: normal;
-      line-height: 1.4rem;
-    }
-
-    .away {
-      border-right: 2px solid;
-      border-top: 2px solid;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-    }
-
-    .home {
-      border-bottom: 2px solid;
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
-      border-right: 2px solid;
-    }
-
-    .awayteamlogo {
-      @include teamlogo;
-      border-top-left-radius: 8px;
-    }
-
-    .hometeamlogo {
-      @include teamlogo;
-      border-bottom-left-radius: 8px;
-    }
-
-    .teamrecord {
-      @include odds;
-      color: $grey-300;
-      font-style: normal;
-      font-weight: 700;
-    }
-
-    .goododds {
-      @include odds;
-      color: $light-green-200;
-    }
-
-    .badodds {
-      @include odds;
-      color: $red-200;
-    }
-
-    .score {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      padding-right: .4rem;
-    }
   }
 
-  .atbat {
-    padding: .4rem;
+  .visualization {
+    padding-bottom: .4rem;
   }
 
   .lastupdate {
-    font-size: .9rem;
+    font-size: .8rem;
     font-style: italic;
-    margin-top: 1rem;
-    padding-top: .4rem;
+    overflow: hidden;
+    padding-left: .8rem;
+  }
+
+  .messages {
+    @include webkit-scrollbar;
+    background-color: $wiggly-green;
+    height: 8rem;
+    overflow: auto;
+    position: relative;
+    scrollbar-color: $grey-400 $wiggly-green;
+    scrollbar-width: thin;
+  }
+
+  .message {
+    font-size: .8rem;
+    font-style: italic;
+    padding: 0;
+  }
+
+  .abomination {
+    color: $grey-400;
   }
 }

@@ -1,0 +1,61 @@
+@import '../../colors';
+
+@mixin teamlogo {
+  height: 100%;
+  padding: 0 .4rem;
+}
+
+@mixin odds {
+  font-family: 'Open Sans', sans-serif;
+  font-size: .8rem;
+  font-style: italic;
+  padding-left: .2rem;
+}
+
+.away {
+  border-right: 2px solid;
+  border-top: 2px solid;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.home {
+  border-bottom: 2px solid;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-right: 2px solid;
+}
+
+.awayteamlogo {
+  @include teamlogo;
+  border-top-left-radius: 8px;
+}
+
+.hometeamlogo {
+  @include teamlogo;
+  border-bottom-left-radius: 8px;
+}
+
+.teamrecord {
+  @include odds;
+  color: $grey-300;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.goododds {
+  @include odds;
+  color: $light-green-200;
+}
+
+.badodds {
+  @include odds;
+  color: $red-200;
+}
+
+.score {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  padding-right: .4rem;
+}

@@ -9,7 +9,6 @@ const theme = createMuiTheme({
   },
   typography: {
     fontFamily: ['"Lora"', 'serif'].join(','),
-    fontSize: 18,
   },
 });
 

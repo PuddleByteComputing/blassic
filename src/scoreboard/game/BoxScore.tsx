@@ -45,7 +45,7 @@ function BoxScore({ play }: Props) {
   return (
     <Grid item container direction="column" className={styles.root}>
       <Grid item container className={styles.awayline}>
-        <Grid item xs={2} />
+        <Grid item xs={1} />
         {displayInnings.map((inning) =>
           <Grid item container xs={1} alignContent="center" justify="center"
             key={`t${inning}`}
@@ -54,9 +54,10 @@ function BoxScore({ play }: Props) {
             {inning > play.inning ? <span>&nbsp;</span> : inningRuns(play, inning, true, inningStats)}
           </Grid>
         )}
+        <Grid item xs={1} />
       </Grid>
       <Grid item container className={styles.homeline}>
-        <Grid item xs={2} />
+        <Grid item xs={1} />
         {displayInnings.map((inning) =>
           <Grid item container xs={1} alignContent="center" justify="center"
             key={`b${inning}`}
@@ -67,6 +68,7 @@ function BoxScore({ play }: Props) {
               : inningRuns(play, inning, false, inningStats)}
           </Grid>
         )}
+        <Grid item xs={1} />
       </Grid>
     </Grid >
   );

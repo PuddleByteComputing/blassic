@@ -7,68 +7,89 @@
   font-weight: 700;
 }
 
-.header {
-  .good {
-    @include leaguename;
-    border-top-left-radius: 32px;
-    padding-right: 2rem;
+.left {
+  @include leaguename;
+  border-top-left-radius: 32px;
+
+  @media screen and (min-width: $breakpoint-sm) {
+    padding-right: 1rem;
   }
 
-  .evil {
-    @include leaguename;
-    border-top-right-radius: 32px;
-    padding-left: 2rem;
-  }
-
-  .goodspace {
-    background-color: $wiggly-green;
-    height: 50%;
-
-    .goodmask {
-      border-bottom-right-radius: 8px;
-      height: 100%;
-      width: 100%;
-    }
-  }
-
-  .goodshoulder {
-    background-color: $wiggly-green;
-    border-top-left-radius: 16px;
-    height: 50%;
-  }
-
-  .evilspace {
-    background-color: $wiggly-green;
-    height: 50%;
-
-    .evilmask {
-      border-bottom-left-radius: 8px;
-      height: 100%;
-      width: 100%;
-    }
-  }
-
-  .evilshoulder {
-    background-color: $wiggly-green;
-    border-top-right-radius: 16px;
-    height: 50%;
+  @media screen and (min-width: $breakpoint-md) {
+    padding-right: 8%;
   }
 }
 
-.green {
+.right {
+  @include leaguename;
+  border-top-right-radius: 32px;
+
+  @media screen and (min-width: $breakpoint-sm) {
+    padding-left: 1rem;
+  }
+
+  @media screen and (min-width: $breakpoint-md) {
+    padding-left: 8%;
+  }
+}
+
+.leftspace {
   background-color: $wiggly-green;
+  height: 50%;
+
+  .leftmask {
+    border-bottom-right-radius: 8px;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.leftshoulder {
+  background-color: $wiggly-green;
+  border-top-left-radius: 16px;
+  height: 50%;
+}
+
+.rightspace {
+  background-color: $wiggly-green;
+  height: 50%;
+
+  .rightmask {
+    border-bottom-left-radius: 8px;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.rightshoulder {
+  background-color: $wiggly-green;
+  border-top-right-radius: 16px;
+  height: 50%;
 }
 
 .scoreboard {
   background-color: $wiggly-green;
+
+  .leftgames {
+    @media screen and (min-width: $breakpoint-md) {
+      padding-right: 4%;
+    }
+  }
+
+  .rightgames {
+    @media screen and (min-width: $breakpoint-md) {
+      padding-left: 4%;
+    }
+  }
+}
+
+.footnote {
+  background-color: $wiggly-green;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
-
-  .footnote {
-    color: $grey-300;
-    font-size: 1rem;
-    font-style: italic;
-    padding-bottom: .4rem;
-    padding-right: 2rem;
-  }
+  color: $grey-400;
+  font-size: 1rem;
+  font-style: italic;
+  padding-bottom: .4rem;
+  padding-top: 1rem;
 }

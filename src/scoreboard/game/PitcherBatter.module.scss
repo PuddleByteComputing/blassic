@@ -1,0 +1,40 @@
+.pitcherbatter {
+  font-size: .8rem;
+  font-variant: normal;
+  padding: .4rem;
+
+  .ablabel,
+  .plabel {
+    border: 1px solid;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    padding: 1px;
+  }
+
+  .plabel {
+    border-bottom-left-radius: 4px;
+    border-right: 0;
+    border-top-left-radius: 4px;
+  }
+
+  .ablabel {
+    border-bottom-right-radius: 4px;
+    border-left: 0;
+    border-top-right-radius: 4px;
+  }
+
+  .abname,
+  .pname {
+    font-size: .8rem;
+    padding: 1px 0;
+    white-space: nowrap;
+  }
+
+  .pname {
+    padding-right: .2rem;
+  }
+
+  .abname {
+    padding-left: .2rem;
+  }
+}
