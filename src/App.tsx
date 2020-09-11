@@ -5,6 +5,7 @@ import ClockProvider from './ClockProvider';
 import ScoreBoard from './scoreboard';
 import Splash from './Splash';
 import Controls from './controls/';
+import Credits from './Credits';
 
 import styles from './App.module.scss';
 
@@ -16,6 +17,7 @@ function App() {
           <Controls />
           <Splash />
           <ScoreBoard />
+          <Credits />
         </div>
       </ClockProvider>
     </GameDataProvider>
