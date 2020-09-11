@@ -25,7 +25,6 @@ const initialInningStats = {} as { [teamId: string]: InningStatType[][] };
 const initialState: GameDataProviderApi = {
   available: initialAvailableGames,
   day: '',
-  // @ts-ignore -- See turnsRef below
   inningStats: initialInningStats,
   season: '',
   seasonSpans: {},
@@ -147,6 +146,10 @@ function GameDataProvider({ children }: Props) {
           }
 
           turns.current.push(JSON.parse(result.value));
+          // force re-render once we've got a line of data, don't wait for all of it
+          if (turns.current.length % 100 === 1) {
+            setStreaming(`s${season}d${day}-${turns.current.length}`);
+          }
           updateInningStats();
 
           lineReader.read().then(processLine);
