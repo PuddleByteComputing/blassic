@@ -27,10 +27,10 @@ function Speed() {
 
   return (
     <>
-      <Grid item container xs={2} md={4} alignContent="center" justify="flex-end">
+      <Grid item container xs={3} sm={4} md={4} alignContent="center" justify="flex-end">
         Dawdle:
       </Grid>
-      <Grid item container xs={8} md={5} alignContent="center" justify="center" className={styles.slider}>
+      <Grid item container xs={6} sm={4} md={5} alignContent="center" justify="center" className={styles.slider}>
         {/* @ts-ignore -- Slider callbacks are typed number | number[]; we're not using range sliders */}
         <Slider
           value={dawdleFeedback}
@@ -40,7 +40,7 @@ function Speed() {
           onChangeCommitted={handleDawdleCommit}
         />
       </Grid>
-      <Grid item container xs={2} md={2} alignContent="center" justify="flex-start" className={styles.dawdle}>
+      <Grid item container xs={3} sm={4} md={2} alignContent="center" justify="flex-start" className={styles.dawdle}>
         {formatDawdle(dawdleFeedback)}s
       </Grid>
     </>

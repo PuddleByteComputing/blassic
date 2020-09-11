@@ -5,7 +5,7 @@ import { gameDataContext } from '../../GameDataProvider';
 import { UUID } from '../../types';
 import styles from './index.module.scss';
 
-const maxMessages = 20;
+const maxPlayingMessages = 3;
 
 // You don't need to watch more than one foul ball with two strikes, do you?
 function naiveDedupe<T>(arr: Array<T>): Array<T> {
@@ -18,17 +18,17 @@ interface Props {
 
 function PlayByPlay({ teamId }: Props) {
   const { turnsRef } = useContext(gameDataContext);
-  const { turnNumber } = useContext(clockContext);
+  const { turnNumber, playing } = useContext(clockContext);
 
   const messages = [];
-  const firstTurnIdx = Math.max(0, turnNumber - maxMessages);
+  const firstTurnIdx = playing ? Math.max(0, turnNumber - maxPlayingMessages) : 0;
 
   for (let i = turnNumber; i >= firstTurnIdx; i--) {
     messages.push(turnsRef.current[i]?.schedule?.find((play) => play.homeTeam === teamId)?.lastUpdate);
   }
 
   return (
-    <List disablePadding classes={{ root: styles.messages }}>
+    <List disablePadding classes={{ root: styles[`${playing ? '' : 'paused'}messages`] }}>
       {naiveDedupe(messages).map((msg, idx) =>
         <ListItem key={`m${turnNumber - idx}`} className={styles.message}>
           <ListItemText primary={msg} primaryTypographyProps={{ variant: "body2" }} />

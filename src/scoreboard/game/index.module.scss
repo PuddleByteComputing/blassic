@@ -75,12 +75,20 @@
     padding-left: .8rem;
   }
 
-  .messages {
-    @include webkit-scrollbar;
-    background-color: $wiggly-green;
-    height: 8rem;
-    overflow: auto;
+  @mixin messages {
+    height: 130px;
     position: relative;
+  }
+
+  .messages {
+    @include messages;
+    overflow: hidden;
+  }
+
+  .pausedmessages {
+    @include webkit-scrollbar;
+    @include messages;
+    overflow: scroll;
     scrollbar-color: $grey-400 $wiggly-green;
     scrollbar-width: thin;
   }

@@ -15,10 +15,10 @@ import styles from './index.module.scss';
 function Controls() {
   return (
     <Grid container className={styles.controls}>
-      <Grid item container xs={12} md={4} alignContent="center" justify="flex-start" className={styles.gamepicker}>
+      <Grid item container xs={12} sm={4} alignContent="center" justify="flex-start" className={styles.gamepicker}>
         <GameSelect />
       </Grid>
-      <Grid item container xs={12} md={4} alignContent="center" justify="center">
+      <Grid item container xs={12} sm={4} alignContent="center" justify="center">
         <Grid item container xs={2} />
         <Grid item container xs={8} alignContent="center" justify="center">
           <SkipBackButton />
@@ -31,7 +31,7 @@ function Controls() {
           <Counter />
         </Grid>
       </Grid>
-      <Grid item container xs={12} md={4} alignContent="center" justify="flex-end">
+      <Grid item container xs={12} sm={4} alignContent="center" justify="flex-end">
         <Speed />
       </Grid>
     </Grid>
