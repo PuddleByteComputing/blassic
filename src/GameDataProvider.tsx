@@ -39,7 +39,7 @@ export const gameDataContext = createContext(initialState);
 const { Provider } = gameDataContext;
 
 async function openStream(season: string, day: string) {
-  return fetch(`/forbidden-knowledge/${season}/${day}.txt`)
+  return fetch(`${process.env.PUBLIC_URL}/forbidden-knowledge/${season}/${day}.txt`)
     .then(response => response.body)
     .then(body => body && createReadableStreamLineReader(body))
     .then((lineStream) => lineStream?.getReader())
@@ -123,7 +123,8 @@ function GameDataProvider({ children }: Props) {
   };
 
   const fetchAvailableGames = () => {
-    fetch('/forbidden-knowledge/index.json')
+    console.log(process.env);
+    fetch(`${process.env.PUBLIC_URL}/forbidden-knowledge/index.json`)
       .then(response => response.json())
       .then(available => ingestAvailableGames(available))
       .catch((err) => console.error(`Could not fetch available games index: ${err}`));
