@@ -29,7 +29,7 @@
     "postbuild": "[ -L $npm_package_config_forbiddenSymlink ] || ln -s ../forbidden_knowledge/digested $npm_package_config_forbiddenSymlink",
     "test": "react-scripts test",
     "eject": "react-scripts eje2ct",
-    "forbidden": "aws --no-sign-request s3 sync s3://blaseball-archive-iliana/ ./forbidden_knowledge",
+    "forbidden": "aws --no-sign-request s3 sync s3://blaseball-archive-iliana/ ./forbidden_knowledge --exclude idols\\* --exclude \\*hourly\\*",
     "daybreak": "node ./bin/daybreak.js"
   },
   "eslintConfig": {
