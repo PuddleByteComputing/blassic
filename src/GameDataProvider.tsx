@@ -123,7 +123,6 @@ function GameDataProvider({ children }: Props) {
   };
 
   const fetchAvailableGames = () => {
-    console.log(process.env);
     fetch(`${process.env.PUBLIC_URL}/forbidden-knowledge/index.json`)
       .then(response => response.json())
       .then(available => ingestAvailableGames(available))
