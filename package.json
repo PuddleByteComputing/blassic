@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "config": {
+    "forbiddenSymlink": "public/forbidden-knowledge"
+  },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
@@ -21,7 +24,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "[ ! -L $npm_package_config_forbiddenSymlink ] || rm $npm_package_config_forbiddenSymlink",
     "build": "react-scripts build",
+    "postbuild": "[ -L $npm_package_config_forbiddenSymlink ] || ln -s ../forbidden_knowledge/digested $npm_package_config_forbiddenSymlink",
     "test": "react-scripts test",
     "eject": "react-scripts eje2ct",
     "forbidden": "aws --no-sign-request s3 sync s3://blaseball-archive-iliana/ ./forbidden_knowledge",
