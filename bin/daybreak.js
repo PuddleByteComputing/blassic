@@ -11,15 +11,13 @@ const outDir = `${dataDir}/digested`;
 
 // TODO: make this incremental (only process new data)
 
-function cleanup() {
-  fs.rmdirSync(tempDir, {recursive: true}, (err) => null);
-}
-
 function setup() {
-  cleanup();
-  fs.rmdirSync(outDir, {recursive: true}, (err) => null);
-  fs.mkdirSync(tempDir);
-  fs.mkdirSync(outDir, {recursive: true});
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+  }
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, {recursive: true});
+  }
 }
 
 function forbiddenList() {
@@ -34,7 +32,9 @@ function forbiddenList() {
     }
   });
 
-  return files.map(([s, t]) => [t, s]).sort().map(([t, s]) => [s, t]);
+  return files.map(([s, t]) => [t, s])
+              .sort((a,b) => a - b)
+              .map(([t, s]) => [s, t]);
 }
 
 function ensureOutstream(outStreams, season, day, timestamp) {
@@ -103,6 +103,12 @@ function postseasonMetadata(gameTurn) {
   });
 }
 
+const alreadyBroken = () =>
+  new Set(fs.readdirSync(tempDir)
+            .flatMap((season) => fs.readdirSync(`${tempDir}/${season}`)
+                                   .flatMap((day) => fs.readdirSync(`${tempDir}/${season}/${day}`))));
+
+
 async function tempsToDays() {
   return Promise.all(
     fs.readdirSync(tempDir)
@@ -117,7 +123,7 @@ async function tempsToDays() {
           return (
             Promise.all(fs.readdirSync(dir)
                           .map(file => [parseInt(file), `${dir}/${file}`])
-                          .sort()
+                          .sort((a,b) => a - b)
                           .map(([timestamp, fileName]) =>
                             promisify(fs.readFile)(fileName, (err, data) => err ? '' : data))
             )
@@ -141,17 +147,20 @@ async function tempsToDays() {
 
 function rewriteForbiddenKnowledge() {
   setup();
-
   const forbiddenFiles = forbiddenList();
+  const brokenFiles = alreadyBroken();
 
-  console.log(`Breaking days for ${forbiddenFiles.length} forbidden files`);
-  console.log(`${Array(forbiddenFiles.length + 1).join('\u2500')}\u2510`);
-  Promise.all(forbiddenFiles.map(forbiddenToTemp))
+  const unbroken = forbiddenFiles.filter(([file, timestamp]) => !brokenFiles.has(timestamp.toString()));
+
+  console.log(`Breaking days for ${unbroken.length} new forbidden files`);
+  console.log(`${Array(unbroken.length + 1).join('\u2500')}\u2510`);
+  Promise.all(unbroken.map(forbiddenToTemp))
          .then(() => {
            console.log('\u2519');
-           console.log('Days broken, recombining...');
+           console.log('Forbidden files broken, recombining into days...');
            tempsToDays()
-             .then((linecounts) =>
+             .then((linecounts) => {
+               console.log('writing index');
                fs.writeFile(`${outDir}/index.json`,
                             JSON.stringify(
                               linecounts.reduce((memo, data) => {
@@ -160,9 +169,8 @@ function rewriteForbiddenKnowledge() {
                                 return ({...memo, [s]: {...memo?.[s], [d]: metadata}});
                               }, {})
                             ),
-                            (err) => err ? console.log(err) : null)
-               )
-             .then(cleanup);
+                            (err) => err ? console.log(err) : null);
+             });
          });
 }
 
