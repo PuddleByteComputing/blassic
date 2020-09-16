@@ -8,6 +8,7 @@ import BoxScore from './BoxScore';
 import TeamScore from './TeamScore';
 import PitcherBatter from './PitcherBatter';
 import PlayByPlay from './PlayByPlay';
+import Outcomes from './Outcomes';
 import { isAbomination } from '../../lib/play-utils';
 import { GamePlayType, StandingsMapType } from '../../types';
 import styles from './index.module.scss';
@@ -22,6 +23,10 @@ interface Props {
 }
 
 function Game({ play, standings }: Props) {
+  if (play.outcomes && play.outcomes.length) {
+    console.log(play);
+  }
+
   return (
     <Grid item container direction="column" className={styles.scorecard}>
       <Grid item container className={styles.inning}>
@@ -63,6 +68,11 @@ function Game({ play, standings }: Props) {
           }
         </Grid>
       </Grid>
+      {!play.gameComplete || !play.outcomes?.length ? null :
+        <Grid item container className={styles.outcomes}>
+          <Outcomes play={play} />
+        </Grid>
+      }
     </Grid >
   );
 }

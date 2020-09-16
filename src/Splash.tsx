@@ -19,7 +19,7 @@ function Splash() {
         </div>
         <Grid item md={3} />
       </Grid>
-      <Grid item container alignContent="center" justify="center">
+      <Grid item container alignContent="center" justify="center" className={styles.prompt}>
         <span>Select a Season and Day to&nbsp;</span>
         <Hidden smUp><br /></Hidden>
         <span>replay some classic Blaseball!</span>

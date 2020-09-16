@@ -153,7 +153,7 @@ export interface GamePlayType {
   inning: number,
   isPostseason: boolean,
   lastUpdate: string,
-  outcomes: [] // TODO
+  outcomes: string[],
   phase: number,
   rules: UUID,
   season: number,
