@@ -21,7 +21,7 @@ function SkipBackButton() {
   return (
     <IconButton
       disabled={!!(streaming || !day || (day === '0' && turnNumber < 1))}
-      onClick={(event) => { event.stopPropagation(); skipBack(); }}
+      onClick={(event) => { event.stopPropagation(); skipBack() }}
       onFocus={(event) => event.stopPropagation()}
       size="small"
     >

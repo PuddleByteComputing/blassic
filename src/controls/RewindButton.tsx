@@ -17,7 +17,7 @@ function RewindButton() {
   return (
     <IconButton
       disabled={turnNumber < 1}
-      onClick={(event) => { event.stopPropagation(); rewind(); }}
+      onClick={(event) => { event.stopPropagation(); rewind() }}
       onFocus={(event) => event.stopPropagation()}
       size="small"
     >

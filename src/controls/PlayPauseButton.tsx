@@ -8,7 +8,7 @@ import styles from './index.module.scss';
 const PauseButton = ({ pause }: { pause: () => void }) => (
   <IconButton
     className={styles.pause}
-    onClick={(event) => { event.stopPropagation(); pause(); }}
+    onClick={(event) => { event.stopPropagation(); pause() }}
     onFocus={(event) => event.stopPropagation()}
   >
     <PauseCircleFilled fontSize="large" />
@@ -19,7 +19,7 @@ const PlayButton = ({ disabled, play }: { disabled: boolean, play: () => void })
   <IconButton
     className={styles.pause}
     disabled={disabled}
-    onClick={(event) => { event.stopPropagation(); play(); }}
+    onClick={(event) => { event.stopPropagation(); play() }}
     onFocus={(event) => event.stopPropagation()}
   >
     <PlayCircleFilled fontSize="large" />
@@ -29,7 +29,7 @@ const PlayButton = ({ disabled, play }: { disabled: boolean, play: () => void })
 const ReplayButton = ({ replay }: { replay: () => void }) => (
   <IconButton
     className={styles.pause}
-    onClick={(event) => { event.stopPropagation(); replay(); }}
+    onClick={(event) => { event.stopPropagation(); replay() }}
     onFocus={(event) => event.stopPropagation()}
   >
     <Replay fontSize="large" />
@@ -44,7 +44,7 @@ function PlayPauseButton() {
   if (playing) {
     return (<PauseButton pause={() => playBall(false)} />);
   } else if (turnsLength && (turnNumber >= turnsLength - 1)) {
-    return (<ReplayButton replay={() => { setTurnNumber(0); playBall(true); }} />);
+    return (<ReplayButton replay={() => { setTurnNumber(0); playBall(true) }} />);
   }
 
   return (<PlayButton play={() => playBall(true)} disabled={!turnsLength} />);

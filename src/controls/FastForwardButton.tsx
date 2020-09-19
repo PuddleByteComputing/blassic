@@ -20,7 +20,7 @@ function FastForwardButton() {
   return (
     <IconButton
       disabled={turnNumber >= maxTurnIdx}
-      onClick={(event) => { event.stopPropagation(); fastForward(); }}
+      onClick={(event) => { event.stopPropagation(); fastForward() }}
       onFocus={(event) => event.stopPropagation()}
       size="small"
     >

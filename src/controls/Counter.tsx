@@ -14,7 +14,7 @@ function Counter() {
   const { turnsRef } = useContext(gameDataContext);
   const [format, setFormat] = useState(1);
 
-  if (!turnsRef.current.length) { return null; }
+  if (!turnsRef.current.length) { return null }
 
   const pseudoMsElapsed = turnNumber * dawdling;
   const pseudoMsTotal = (turnsRef.current.length - 1) * dawdling;

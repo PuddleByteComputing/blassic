@@ -75,7 +75,7 @@ function ClockProvider({ children }: { children: React.ReactNode }) {
   function externalDawdle(val: number) {
     const wasTicking = stopTicking();
     dawdle(val);
-    if (wasTicking) { tick(); }
+    if (wasTicking) { tick() }
   }
 
   const api = {

@@ -22,7 +22,7 @@ function SkipForwardButton() {
   return (
     <IconButton
       disabled={!!streaming || !day}
-      onClick={(event) => { event.stopPropagation(); skipForward(); }}
+      onClick={(event) => { event.stopPropagation(); skipForward() }}
       onFocus={(event) => event.stopPropagation()}
       size="small"
     >
