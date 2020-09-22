@@ -23,10 +23,6 @@ interface Props {
 }
 
 function Game({ play, standings }: Props) {
-  if (play.outcomes && play.outcomes.length) {
-    console.log(play);
-  }
-
   return (
     <Grid item container direction="column" className={styles.scorecard}>
       <Grid item container className={styles.inning}>

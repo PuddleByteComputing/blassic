@@ -1,3 +1,5 @@
+@import '../../colors';
+
 $pad: .3rem;
 
 .root {
@@ -8,6 +10,14 @@ $pad: .3rem;
 }
 
 .awayline {
+  .shamepit {
+    color: $purple-200;
+    font-size: .8rem;
+    font-weight: 400;
+    padding: 0 0 $pad 0;
+    border-bottom: 2px solid transparent;
+  }
+
   .starttrypt {
     border-bottom: 2px solid;
     border-left: 1px solid;
@@ -27,6 +37,14 @@ $pad: .3rem;
 }
 
 .homeline {
+  .shamepit {
+    color: $purple-200;
+    font-size: .8rem;
+    font-weight: 400;
+    padding: $pad 0 0 0;
+    border-top: 2px solid transparent;
+  }
+
   .starttrypt {
     border-left: 1px solid;
     border-top: 1px solid;

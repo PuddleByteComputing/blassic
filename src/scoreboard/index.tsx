@@ -21,7 +21,7 @@ function ScoreBoard() {
     updateStandings(turnsRef.current[0] ? mapTeamsToStandings(turnsRef.current[0]) : initialStandingsMap);
   useEffect(remapStandings, [turnsRef.current[0]]);
 
-  if (!turn) { return <></>; }
+  if (!turn) { return null }
 
   // @ts-ignore .palette does exist on the theme object, though
   const bgColor = theme.palette.background.default;

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Grid } from '@material-ui/core';
-import { gameDataContext, InningStatsType } from '../../GameDataProvider';
+import { gameDataContext, GameStatsType } from '../../GameDataProvider';
 import { GamePlayType } from '../../types';
 import styles from './BoxScore.module.scss';
 
@@ -17,22 +17,47 @@ function inningStyle(inning: number) {
   return styles.midtrypt;
 }
 
-function inningRuns(play: GamePlayType, inningNum: number, top: boolean, inningStats: InningStatsType): number {
-  const gameStats = inningStats[play.homeTeam];
+// NOTES:
+//  - InningStatsType[gameId][0] is stats at start of game,
+//    inningStatsType[gameId][1] is stats at end of 1st inning,
+//    ...etc
+//  - the home team UUID is the gameId for InningStatType
 
-  const score = (inningNum === 9 || ((inningNum === play.inning) && (top === play.topOfInning)))
-    ? play[top ? 'awayScore' : 'homeScore']
-    : (inningNum > 8)
-      ? gameStats[gameStats.length - 1][top ? 0 : 1]?.score || 0
-      : gameStats[inningNum][top ? 0 : 1]?.score || 0;
+const ongoingInningScore = (half: 0 | 1, play: GamePlayType) =>
+  play[half ? 'homeScore' : 'awayScore'];
 
-  const prevScore = (inningNum === 0)
-    ? 0
-    : (inningNum > 8)
-      ? gameStats[8][top ? 0 : 1]?.score || 0
-      : gameStats[inningNum - 1][top ? 0 : 1]?.score || 0;
+const extraInningScore = (half: 0 | 1, stats: GameStatsType) =>
+  stats[stats.length - 1][half]?.score;
 
-  return score - prevScore;
+const completedInningScore = (inning: number, half: 0 | 1, stats: GameStatsType) =>
+  (inning > 8) ? extraInningScore(half, stats) : stats[inning + 1][half]?.score;
+
+const previousInningScore = (inning: number, half: 0 | 1, stats: GameStatsType) =>
+  (inning > 8)
+    ? stats[9][half]?.score
+    : stats[inning]?.[half]?.score;
+
+const shameAdjustment = (inning: number, half: 0 | 1, stats: GameStatsType) =>
+  inning === 0 ? (stats[0]?.[half]?.shamePit || 0) : 0;
+
+// First inning halves can start with various effects or announcements before the first pitch
+const noBattersYet = (play: GamePlayType, half: 0 | 1) =>
+  play[half === 0 ? 'awayTeamBatterCount' : 'homeTeamBatterCount'] < 0;
+
+function inningRuns(play: GamePlayType, inning: number, half: 0 | 1, stats: GameStatsType): string {
+  //       - inning is zero-indexed, as in gameData
+  if (!stats) { return '?' }
+  if (noBattersYet(play, half)) { return '' }
+
+  const isOngoingInningHalf = (inning === play.inning) && ((half === 0) === play.topOfInning);
+
+  const score = (inning === 9 || isOngoingInningHalf)
+    ? ongoingInningScore(half, play)
+    : completedInningScore(inning, half, stats);
+
+  return ((score || 0)
+    - (previousInningScore(inning, half, stats) || 0)
+    - shameAdjustment(inning, half, stats)).toString();
 }
 
 interface Props {
@@ -40,24 +65,33 @@ interface Props {
 }
 
 function BoxScore({ play }: Props) {
-  const { inningStats } = useContext(gameDataContext);
+  const { getGameStats } = useContext(gameDataContext);
+  const stats = getGameStats(play.homeTeam);
 
   return (
     <Grid item container direction="column" className={styles.root}>
       <Grid item container className={styles.awayline}>
-        <Grid item xs={1} />
+        <Grid item container xs={1} alignContent="center" justify="flex-end">
+          {stats[0]?.[0]?.shamePit
+            ? <span className={styles.shamepit}>{stats[0][0].shamePit}</span>
+            : ''}
+        </Grid>
         {displayInnings.map((inning) =>
           <Grid item container xs={1} alignContent="center" justify="center"
             key={`t${inning}`}
             className={inningStyle(inning)}
           >
-            {inning > play.inning ? <span>&nbsp;</span> : inningRuns(play, inning, true, inningStats)}
+            {inning > play.inning ? <span>&nbsp;</span> : inningRuns(play, inning, 0, stats)}
           </Grid>
         )}
         <Grid item xs={1} />
       </Grid>
       <Grid item container className={styles.homeline}>
-        <Grid item xs={1} />
+        <Grid item container xs={1} alignContent="center" justify="flex-end">
+          {stats[0]?.[1]?.shamePit
+            ? <span className={styles.shamepit}>{stats[0][1].shamePit}</span>
+            : ''}
+        </Grid>
         {displayInnings.map((inning) =>
           <Grid item container xs={1} alignContent="center" justify="center"
             key={`b${inning}`}
@@ -65,7 +99,7 @@ function BoxScore({ play }: Props) {
           >
             {inning > play.inning || (inning === play.inning && play.topOfInning)
               ? <span>&nbsp;</span>
-              : inningRuns(play, inning, false, inningStats)}
+              : inningRuns(play, inning, 1, stats)}
           </Grid>
         )}
         <Grid item xs={1} />

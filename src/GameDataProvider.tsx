@@ -2,13 +2,15 @@ import React, { createContext, useEffect, useRef, useState } from 'react';
 import { GameDataType, GameMetaDataType, GameCacheType, GamePlayType } from './types';
 import createReadableStreamLineReader from './lib/readable-stream-line-reader';
 
-type InningStatType = { turnNumber: number, score: number } | null;
-export type InningStatsType = { [teamId: string]: InningStatType[][] };
+type InningStatsType = { turnNumber: number, score: number, shamePit?: number } | null;
+export type GameStatsType = InningStatsType[][];
+type StatsType = { [teamId: string]: GameStatsType };
 
 interface GameDataProviderApi {
   available: GameMetaDataType,
   day: string,
-  inningStats: InningStatsType,
+  getGameStats: (teamId: string) => GameStatsType,
+  lastRefresh: number,
   season: string,
   seasonSpans: { [season: string]: number[] }
   setDay: (day: string | number) => void,
@@ -19,13 +21,13 @@ interface GameDataProviderApi {
 
 const initialGameCache: GameCacheType = { data: {} };
 const initialAvailableGames: GameMetaDataType = {};
-
-const initialInningStats = {} as { [teamId: string]: InningStatType[][] };
+const initialStatsCache = {} as { [seasonId: string]: { [dayId: string]: StatsType } };
 
 const initialState: GameDataProviderApi = {
   available: initialAvailableGames,
   day: '',
-  inningStats: initialInningStats,
+  inningStats: (_id: string) => ({}),
+  lastRefresh: Date.now(),
   season: '',
   seasonSpans: {},
   setDay: (_day: string | number) => null,
@@ -49,10 +51,12 @@ async function openStream(season: string, day: string) {
 interface Props { children: React.ReactNode }
 
 function GameDataProvider({ children }: Props) {
+  const [lastRefresh, setLastRefresh] = useState(initialState.lastRefresh);
+  const refresh = () => setLastRefresh(Date.now());
   const [day, setDay] = useState('');
   const [season, setSeason] = useState('');
   const [seasonSpans, setSeasonSpans] = useState({} as { [seasonId: string]: number[] });
-  const [inningStats, setInningStats] = useState(initialInningStats);
+  const statsCache = useRef(initialStatsCache);
   const turns: React.MutableRefObject<GameDataType[]> = useRef([]);
   const [streaming, setStreaming] = useState('');
 
@@ -75,8 +79,21 @@ function GameDataProvider({ children }: Props) {
     return [sortedDays[0], sortedDays[lastIdx]].map((day) => day.toString());
   };
 
-  const updateInningStats = () => {
-    if (turns.current.length > 1) {
+  const gameStartStats = () =>
+    (turns.current[0]?.schedule || [])
+      .reduce((memo, play) => {
+        memo[play.homeTeam] = [[
+          { turnNumber: 0, score: play.awayScore },
+          { turnNumber: 0, score: play.homeScore }
+        ]];
+        return memo;
+      }, {} as StatsType);
+
+  const updateStats = () => {
+    statsCache.current[season] = (statsCache.current[season] || {});
+    if (turns.current.length === 1) {
+      statsCache.current[season][day] = gameStartStats();
+    } else if (turns.current.length > 1) {
       const thisTurn = turns.current[turns.current.length - 1];
       const lastTurnIdx = turns.current.length - 2;
       const lastTurn = turns.current[lastTurnIdx];
@@ -84,31 +101,29 @@ function GameDataProvider({ children }: Props) {
       // performance: avoid doing Array.find() 10 times per line received
       type LastTurnMapType = { [id: string]: GamePlayType };
       const lastTurnMap = lastTurn.schedule
-        .reduce((memo, play) => ({ ...memo, [play.homeTeam]: play }), {} as LastTurnMapType);
+        .reduce((memo, play) => {
+          memo[play.homeTeam] = play;
+          return memo;
+        }, {} as LastTurnMapType);
 
       thisTurn.schedule.forEach((play) => {
         const prevPlay = lastTurnMap[play.homeTeam];
         const newInning = prevPlay.gameStart && (play.topOfInning !== prevPlay.topOfInning);
         const endOfGame = play.gameComplete && !prevPlay.gameComplete;
-        let commitInningStats = false;
+        const [s, d, gameId, inningIdx] = [season, day, play.homeTeam, prevPlay.inning + 1];
         if (newInning || endOfGame) {
-          if (!inningStats[play.homeTeam]) {
-            inningStats[play.homeTeam] = [];
-          }
-
-          if (!inningStats[play.homeTeam][prevPlay.inning]) {
-            inningStats[play.homeTeam][prevPlay.inning] = [null, null];
-          }
+          statsCache.current[s][d][gameId] = (statsCache.current[s][d][gameId] || []);
+          statsCache.current[s][d][gameId][inningIdx] = (statsCache.current[s][d][gameId][inningIdx] || [null, null]);
 
           const stats = {
             turnNumber: lastTurnIdx,
             score: prevPlay.topOfInning ? prevPlay.awayScore : prevPlay.homeScore
           };
-          inningStats[play.homeTeam][prevPlay.inning][prevPlay.topOfInning ? 0 : 1] = stats;
-        }
-
-        if (commitInningStats) {
-          setInningStats(inningStats);
+          statsCache.current[s][d][gameId][inningIdx][prevPlay.topOfInning ? 0 : 1] = stats;
+        } else if (play.lastUpdate.match(/The Shame Pit activates/)) {
+          // @ts-ignore we know from our data that this key will exist; typescript doesn't
+          statsCache.current[s][d][gameId][0][prevPlay.topOfInning ? 0 : 1].shamePit =
+            play.topOfInning ? play.awayScore : play.homeScore;
         }
       });
     }
@@ -135,22 +150,23 @@ function GameDataProvider({ children }: Props) {
     turns.current = [];
     openStream(season, day)
       .then((lineReader) => {
-        if (!lineReader) { return; }
+        if (!lineReader) { return }
 
         lineReader.read().then(function processLine(result) {
           if (result.done) {
             setStreaming('');
-            updateInningStats();
+            updateStats();
             cacheGame();
+            refresh();
             return;
           }
 
           turns.current.push(JSON.parse(result.value));
+          updateStats();
           // force re-render once we've got a line of data, don't wait for all of it
           if (turns.current.length % 100 === 1) {
-            setStreaming(`s${season}d${day}-${turns.current.length}`);
+            refresh();
           }
-          updateInningStats();
 
           lineReader.read().then(processLine);
         });
@@ -158,10 +174,11 @@ function GameDataProvider({ children }: Props) {
   };
 
   const setGame = () => {
-    if (!(season && day)) { return; }
+    if (!(season && day)) { return }
 
     if (cache.data?.[season]?.[day]) {
       turns.current = [...cache.data[season][day]];
+      refresh();
     } else if (!streaming && season && day) {
       fetchGame(season, day);
     }
@@ -179,7 +196,8 @@ function GameDataProvider({ children }: Props) {
   const api = {
     available,
     day,
-    inningStats,
+    getGameStats: (id: string) => (statsCache.current[season]?.[day]?.[id] || []),
+    lastRefresh,
     season,
     seasonSpans,
     setDay: externalSetDay,
